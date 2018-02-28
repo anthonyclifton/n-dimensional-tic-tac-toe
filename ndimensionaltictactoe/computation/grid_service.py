@@ -6,4 +6,6 @@ class GridService:
         self.grids = {}
 
     def create_grid(self):
-        return uuid.uuid4()
+        grid_key = uuid.uuid4()
+        self.grids[grid_key] = []
+        return grid_key
