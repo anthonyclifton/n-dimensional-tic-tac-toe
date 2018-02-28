@@ -11,12 +11,12 @@ def test__create_grid__should_return_a_guid_grid_key():
     UUID(str(grid_key))
 
 
-def test__create_grid__should_add_new_grid_to_grids_map():
+def test__create_grid__should_add_a_grid_of_default_size():
     grid_service = GridService()
-
-    assert len(grid_service.grids) == 0
 
     grid_key = grid_service.create_grid()
 
-    assert len(grid_service.grids) == 1
-    assert grid_service.grids[grid_key] == []
+    grid = grid_service.grids[grid_key]
+    assert len(grid) == 3
+    for column in grid:
+        assert len(column) == 3
