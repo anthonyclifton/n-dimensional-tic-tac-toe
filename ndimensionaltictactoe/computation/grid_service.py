@@ -10,9 +10,9 @@ class GridService:
     def create_grid(self, grid_size=3, dimensions=2):
         grid_key = uuid.uuid4()
 
-        grid_shape = tuple([grid_size for dimension in range(dimensions)])
-        new_grid = np.zeros(grid_shape, dtype=int)
+        # grid_shape = tuple([grid_size for dimension in range(dimensions)])
+        # new_grid = np.zeros(grid_shape, dtype=int)
 
-        self.grids[grid_key] = new_grid
+        self.grids[grid_key] = {}
 
         return grid_key
