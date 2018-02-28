@@ -1,14 +1,17 @@
 import uuid
 
+import numpy as np
+
 
 class GridService:
     def __init__(self):
         self.grids = {}
 
-    def create_grid(self, grid_size=3):
+    def create_grid(self, grid_size=3, dimensions=2):
         grid_key = uuid.uuid4()
 
-        new_grid = [[None for col in range(grid_size)] for row in range(grid_size)]
+        grid_shape = tuple([grid_size for dimension in range(dimensions)])
+        new_grid = np.zeros(grid_shape, dtype=int)
 
         self.grids[grid_key] = new_grid
 
