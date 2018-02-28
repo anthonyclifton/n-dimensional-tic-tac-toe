@@ -2,6 +2,8 @@ import uuid
 
 import numpy as np
 
+from ndimensionaltictactoe.models.grid import Grid
+
 
 class GridService:
     def __init__(self):
@@ -13,6 +15,6 @@ class GridService:
         # grid_shape = tuple([grid_size for dimension in range(dimensions)])
         # new_grid = np.zeros(grid_shape, dtype=int)
 
-        self.grids[grid_key] = {}
+        self.grids[grid_key] = Grid()
 
         return grid_key
