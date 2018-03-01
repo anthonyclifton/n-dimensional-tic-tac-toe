@@ -18,3 +18,6 @@ class GridService:
         self.grids[grid_key] = Grid(grid_key)
 
         return grid_key
+
+    def get_grid_by_key(self, key):
+        return self.grids[key]
