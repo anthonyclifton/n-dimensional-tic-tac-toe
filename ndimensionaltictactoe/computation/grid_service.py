@@ -15,6 +15,6 @@ class GridService:
         # grid_shape = tuple([grid_size for dimension in range(dimensions)])
         # new_grid = np.zeros(grid_shape, dtype=int)
 
-        self.grids[grid_key] = Grid()
+        self.grids[grid_key] = Grid(grid_key)
 
         return grid_key

@@ -19,5 +19,6 @@ def test__create_grid__should_add_an_default_grid_object():
 
     grid = grid_service.grids[grid_key]
     assert isinstance(grid, Grid)
+    assert grid.key == grid_key
     assert grid.size == 3
     assert grid.dimensions == 2
