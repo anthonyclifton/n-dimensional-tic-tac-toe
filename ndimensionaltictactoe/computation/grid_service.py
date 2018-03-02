@@ -21,3 +21,6 @@ class GridService:
 
     def get_grid_by_key(self, key):
         return self.grids[key]
+
+    def delete_grid(self, key):
+        del self.grids[key]
