@@ -3,6 +3,7 @@ import uuid
 import numpy as np
 
 from ndimensionaltictactoe.models.grid import Grid
+from ndimensionaltictactoe.models.mark import Mark
 
 
 class GridService:
@@ -24,3 +25,8 @@ class GridService:
 
     def delete_grid(self, key):
         del self.grids[key]
+
+    def add_mark(self, key, mark):
+        grid = self.get_grid_by_key(key)
+        grid.marks.append(mark)
+

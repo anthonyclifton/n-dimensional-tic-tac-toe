@@ -3,3 +3,4 @@ class Grid(object):
         self.key = key
         self.size = size
         self.dimensions = dimensions
+        self.marks = []
