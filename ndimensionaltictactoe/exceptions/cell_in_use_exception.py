@@ -1,0 +1,2 @@
+class CellInUseException(Exception):
+    pass

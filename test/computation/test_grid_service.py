@@ -3,7 +3,8 @@ from uuid import UUID
 import pytest
 
 from ndimensionaltictactoe.computation.grid_service import GridService
-from ndimensionaltictactoe.computation.mark_value import X
+from ndimensionaltictactoe.computation.mark_value import X, O
+from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.grid import Grid
 from ndimensionaltictactoe.models.mark import Mark
 
@@ -53,3 +54,16 @@ def test__add_mark__should_add_the_mark_to_the_grid():
     grid = grid_service.get_grid_by_key(grid_key)
 
     assert grid.marks[0] == mark
+
+
+def test__add_mark__should_raise_exception_if_space_already_filled():
+    existing_mark = Mark(X, (0, 0))
+    new_mark = Mark(O, (0, 0))
+    grid_service = GridService()
+
+    grid_key = grid_service.create_grid()
+
+    grid_service.add_mark(grid_key, existing_mark)
+
+    with pytest.raises(CellInUseException):
+        grid_service.add_mark(grid_key, new_mark)

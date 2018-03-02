@@ -2,6 +2,7 @@ import uuid
 
 import numpy as np
 
+from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.grid import Grid
 from ndimensionaltictactoe.models.mark import Mark
 
@@ -28,5 +29,8 @@ class GridService:
 
     def add_mark(self, key, mark):
         grid = self.get_grid_by_key(key)
-        grid.marks.append(mark)
+        if not grid.get_mark_at_coordinates(mark.coordinates):
+            grid.marks.append(mark)
+        else:
+            raise CellInUseException
 

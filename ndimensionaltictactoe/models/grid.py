@@ -4,3 +4,7 @@ class Grid(object):
         self.size = size
         self.dimensions = dimensions
         self.marks = []
+
+    def get_mark_at_coordinates(self, coordinates):
+        matches = [mark for mark in self.marks if mark.coordinates == coordinates]
+        return matches[0] if len(matches) > 0 else None
