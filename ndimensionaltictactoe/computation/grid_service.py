@@ -16,7 +16,9 @@ class GridService:
 
         self.grids[grid_key] = Grid(grid_key,
                                     player_x_key,
-                                    player_o_key)
+                                    player_o_key,
+                                    size=grid_size,
+                                    dimensions=dimensions)
 
         return grid_key
 
