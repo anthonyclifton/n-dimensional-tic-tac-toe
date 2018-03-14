@@ -1,2 +1,2 @@
-class GridTooSmallException(Exception):
+class GridTooLargeException(Exception):
     pass

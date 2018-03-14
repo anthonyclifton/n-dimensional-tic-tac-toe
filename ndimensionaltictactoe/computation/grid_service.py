@@ -11,7 +11,12 @@ class GridService:
     def create_grid(self, grid_size=3, dimensions=2):
         grid_key = uuid.uuid4()
 
-        self.grids[grid_key] = Grid(grid_key)
+        player_x_key = uuid.uuid4()
+        player_o_key = uuid.uuid4()
+
+        self.grids[grid_key] = Grid(grid_key,
+                                    player_x_key,
+                                    player_o_key)
 
         return grid_key
 
