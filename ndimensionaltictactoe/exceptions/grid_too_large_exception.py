@@ -1,0 +1,2 @@
+class GridTooSmallException(Exception):
+    pass
