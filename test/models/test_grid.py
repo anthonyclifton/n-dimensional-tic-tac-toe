@@ -1,6 +1,14 @@
+import pytest
+
 from ndimensionaltictactoe.computation.mark_value import X, O
+from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
 from ndimensionaltictactoe.models.grid import Grid
 from ndimensionaltictactoe.models.mark import Mark
+
+
+def test__init__should_raise_exception_when_dimensions_less_than_two():
+    with pytest.raises(GridTooSmallException):
+        Grid('test-grid', 3, 1)
 
 
 def test__get_mark_at_coordinates__returns_mark_at_coordinates():

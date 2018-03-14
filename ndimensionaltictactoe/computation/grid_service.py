@@ -1,10 +1,7 @@
 import uuid
 
-import numpy as np
-
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.grid import Grid
-from ndimensionaltictactoe.models.mark import Mark
 
 
 class GridService:
@@ -13,9 +10,6 @@ class GridService:
 
     def create_grid(self, grid_size=3, dimensions=2):
         grid_key = uuid.uuid4()
-
-        # grid_shape = tuple([grid_size for dimension in range(dimensions)])
-        # new_grid = np.zeros(grid_shape, dtype=int)
 
         self.grids[grid_key] = Grid(grid_key)
 

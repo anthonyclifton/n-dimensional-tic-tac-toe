@@ -1,5 +1,10 @@
+from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
+
+
 class Grid(object):
     def __init__(self, key, size=3, dimensions=2):
+        if dimensions < 2:
+            raise GridTooSmallException
         self.key = key
         self.size = size
         self.dimensions = dimensions
