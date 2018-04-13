@@ -2,6 +2,7 @@ import uuid
 
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.grid import Grid
+from ndimensionaltictactoe.models.grid_identifiers import GridIdentifiers
 
 
 class GridService:
@@ -20,7 +21,10 @@ class GridService:
                                     size=grid_size,
                                     dimensions=dimensions)
 
-        return grid_key
+        return GridIdentifiers(grid_key,
+                               player_x_key,
+                               player_o_key)
+
 
     def get_grid_by_key(self, key):
         return self.grids[key]
