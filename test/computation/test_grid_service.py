@@ -3,20 +3,20 @@ from uuid import UUID
 
 import pytest
 
-from ndimensionaltictactoe.computation.grid_service import GridService
+from ndimensionaltictactoe.computation.game_service import GameService
 from ndimensionaltictactoe.computation.mark_value import X, O
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
-from ndimensionaltictactoe.models.grid import Grid
-from ndimensionaltictactoe.models.grid_identifiers import GridIdentifiers
+from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.game_identifiers import GameIdentifiers
 from ndimensionaltictactoe.models.mark import Mark
 
 
-grid_service = GridService()
+grid_service = GameService()
 
 
 def test__create_grid__should_return_grid_identifiers():
     grid_identifiers = grid_service.create_grid()
-    assert isinstance(grid_identifiers, GridIdentifiers)
+    assert isinstance(grid_identifiers, GameIdentifiers)
     assert UUID(str(grid_identifiers.grid_key))
     assert UUID(str(grid_identifiers.x_user_key))
     assert UUID(str(grid_identifiers.o_user_key))
@@ -26,7 +26,7 @@ def test__create_grid__should_add_an_default_grid_object():
     grid_identifiers = grid_service.create_grid()
 
     grid = grid_service.get_grid_by_key(grid_identifiers.grid_key)
-    assert isinstance(grid, Grid)
+    assert isinstance(grid, Game)
     assert grid.key == grid_identifiers.grid_key
     assert grid.size == 3
     assert grid.dimensions == 2

@@ -1,11 +1,11 @@
 import uuid
 
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
-from ndimensionaltictactoe.models.grid import Grid
-from ndimensionaltictactoe.models.grid_identifiers import GridIdentifiers
+from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.game_identifiers import GameIdentifiers
 
 
-class GridService:
+class GameService:
     def __init__(self):
         self.grids = {}
 
@@ -14,13 +14,13 @@ class GridService:
         player_x_key = uuid.uuid4()
         player_o_key = uuid.uuid4()
 
-        self.grids[grid_key] = Grid(grid_key,
+        self.grids[grid_key] = Game(grid_key,
                                     player_x_key,
                                     player_o_key,
                                     size=grid_size,
                                     dimensions=dimensions)
 
-        return GridIdentifiers(grid_key,
+        return GameIdentifiers(grid_key,
                                player_x_key,
                                player_o_key)
 

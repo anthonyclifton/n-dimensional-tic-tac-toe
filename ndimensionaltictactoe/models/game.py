@@ -2,7 +2,7 @@ from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLar
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
 
 
-class Grid(object):
+class Game(object):
     def __init__(self,
                  key,
                  player_x_key,
