@@ -11,7 +11,6 @@ class GridService:
 
     def create_grid(self, grid_size=3, dimensions=2):
         grid_key = uuid.uuid4()
-
         player_x_key = uuid.uuid4()
         player_o_key = uuid.uuid4()
 
@@ -24,7 +23,6 @@ class GridService:
         return GridIdentifiers(grid_key,
                                player_x_key,
                                player_o_key)
-
 
     def get_grid_by_key(self, key):
         return self.grids[key]
