@@ -11,7 +11,7 @@ class Game(object):
                  dimensions=2):
         if dimensions < 2:
             raise GridTooSmallException
-        if dimensions > 3:
+        if dimensions > 2:
             raise GridTooLargeException
         self.key = key
         self.size = size
@@ -21,5 +21,4 @@ class Game(object):
         self.cells = []
 
     def get_cell_by_coordinates(self, coordinates):
-        matches = [mark for mark in self.cells if mark.coordinates == coordinates]
-        return matches[0] if len(matches) > 0 else None
+        return next((mark for mark in self.cells if mark.coordinates == coordinates), None)

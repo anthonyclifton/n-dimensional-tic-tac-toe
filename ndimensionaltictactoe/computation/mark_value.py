@@ -1,3 +1,0 @@
-
-O_MARK = 1
-X_MARK = 2

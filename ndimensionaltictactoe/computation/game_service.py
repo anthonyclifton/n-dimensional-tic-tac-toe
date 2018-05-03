@@ -9,7 +9,7 @@ class GameService:
     def __init__(self):
         self.games = {}
 
-    def create_grid(self, grid_size=3, dimensions=2):
+    def create_game(self, grid_size=3, dimensions=2):
         game_key = uuid.uuid4()
         player_x_key = uuid.uuid4()
         player_o_key = uuid.uuid4()
@@ -30,7 +30,7 @@ class GameService:
     def delete_game(self, key):
         del self.games[key]
 
-    def set_cell(self, key, mark):
+    def mark_cell(self, key, mark):
         grid = self.get_game_by_key(key)
         if not grid.get_cell_by_coordinates(mark.coordinates):
             grid.cells.append(mark)
