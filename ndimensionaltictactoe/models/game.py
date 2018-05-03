@@ -18,8 +18,8 @@ class Game(object):
         self.dimensions = dimensions
         self.player_x_key = player_x_key
         self.player_o_key = player_o_key
-        self.marks = []
+        self.cells = []
 
-    def get_mark_at_coordinates(self, coordinates):
-        matches = [mark for mark in self.marks if mark.coordinates == coordinates]
+    def get_cell_by_coordinates(self, coordinates):
+        matches = [mark for mark in self.cells if mark.coordinates == coordinates]
         return matches[0] if len(matches) > 0 else None

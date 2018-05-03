@@ -1,3 +1,3 @@
-EMPTY = 0
-O = 1
-X = 2
+
+O_MARK = 1
+X_MARK = 2

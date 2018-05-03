@@ -2,7 +2,7 @@ import uuid
 
 import pytest
 
-from ndimensionaltictactoe.computation.mark_value import X, O
+from ndimensionaltictactoe.computation.mark_value import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLargeException
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
 from ndimensionaltictactoe.models.game import Game
@@ -23,22 +23,22 @@ def test__init__should_raise_exception_when_dimensions_greater_than_three():
 
 
 def test__get_mark_at_coordinates__returns_mark_at_coordinates():
-    existing_mark_1 = Mark(X, (0, 0))
-    existing_mark_2 = Mark(O, (1, 1))
+    existing_mark_1 = Mark(X_MARK, (0, 0))
+    existing_mark_2 = Mark(O_MARK, (1, 1))
     grid = Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY)
-    grid.marks.append(existing_mark_1)
-    grid.marks.append(existing_mark_2)
+    grid.cells.append(existing_mark_1)
+    grid.cells.append(existing_mark_2)
 
-    actual_mark = grid.get_mark_at_coordinates((1, 1))
+    actual_mark = grid.get_cell_by_coordinates((1, 1))
 
     assert actual_mark == existing_mark_2
 
 
 def test__get_mark_at_coordinates__returns_none_if_coordinates_are_empty():
-    existing_mark_1 = Mark(X, (0, 0))
+    existing_mark_1 = Mark(X_MARK, (0, 0))
     grid = Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY)
-    grid.marks.append(existing_mark_1)
+    grid.cells.append(existing_mark_1)
 
-    actual_mark = grid.get_mark_at_coordinates((1, 1))
+    actual_mark = grid.get_cell_by_coordinates((1, 1))
 
     assert not actual_mark
