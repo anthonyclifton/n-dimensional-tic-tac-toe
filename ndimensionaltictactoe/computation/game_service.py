@@ -1,6 +1,5 @@
 import uuid
 
-from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.game import Game
 from ndimensionaltictactoe.models.game_identifiers import GameIdentifiers
 
@@ -17,7 +16,8 @@ class GameService:
         self.games[game_key] = Game(game_key,
                                     player_x_key,
                                     player_o_key,
-                                    size=grid_size,
+                                    size_x=grid_size,
+                                    size_y=grid_size,
                                     dimensions=dimensions)
 
         return GameIdentifiers(game_key,

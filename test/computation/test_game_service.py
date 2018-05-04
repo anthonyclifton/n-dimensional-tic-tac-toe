@@ -29,14 +29,16 @@ class TestGameService(unittest.TestCase):
         game = self.game_service.get_game_by_key(game_identifiers.grid_key)
         assert isinstance(game, Game)
         assert game.key == game_identifiers.grid_key
-        assert game.size == 3
+        assert game.size_x == 3
+        assert game.size_y == 3
         assert game.dimensions == 2
 
     def test__create_game_should_add_an_arbitrary_sized_game(self):
         random_game_size = randint(0, 999)
         game_identifiers = self.game_service.create_game(grid_size=random_game_size)
         game = self.game_service.get_game_by_key(game_identifiers.grid_key)
-        assert game.size == random_game_size
+        assert game.size_x == random_game_size
+        assert game.size_y == random_game_size
 
     def test__delete_game__should_remove_game_from_service(self):
         game_identifiers = self.game_service.create_game()
