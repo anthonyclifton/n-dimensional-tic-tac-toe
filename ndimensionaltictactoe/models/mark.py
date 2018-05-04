@@ -3,6 +3,6 @@ X_MARK = 2
 
 
 class Mark(object):
-    def __init__(self, mark_value, coordinates):
-        self.mark_value = mark_value
+    def __init__(self, coordinates, value):
         self.coordinates = coordinates
+        self.value = value

@@ -1,5 +1,7 @@
+from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLargeException
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
+from ndimensionaltictactoe.models.mark import Mark
 
 
 class Game(object):
@@ -22,3 +24,9 @@ class Game(object):
 
     def get_cell_by_coordinates(self, coordinates):
         return next((mark for mark in self.cells if mark.coordinates == coordinates), None)
+
+    def mark_cell_by_coordinates(self, coordinates, mark):
+        if not self.get_cell_by_coordinates(coordinates):
+            self.cells.append(Mark(coordinates, mark))
+        else:
+            raise CellInUseException

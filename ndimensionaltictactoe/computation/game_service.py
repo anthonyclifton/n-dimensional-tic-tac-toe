@@ -31,9 +31,7 @@ class GameService:
         del self.games[key]
 
     def mark_cell(self, key, mark):
-        grid = self.get_game_by_key(key)
-        if not grid.get_cell_by_coordinates(mark.coordinates):
-            grid.cells.append(mark)
-        else:
-            raise CellInUseException
+        game = self.get_game_by_key(key)
+        game.mark_cell_by_coordinates(mark.coordinates, mark.value)
+
 
