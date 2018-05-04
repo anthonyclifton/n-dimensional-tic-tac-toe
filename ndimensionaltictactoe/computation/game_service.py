@@ -8,7 +8,10 @@ class GameService:
     def __init__(self):
         self.games = {}
 
-    def create_game(self, grid_size=3, dimensions=2):
+    def create_game(self,
+                    grid_size_x=3,
+                    grid_size_y=3,
+                    dimensions=2):
         game_key = uuid.uuid4()
         player_x_key = uuid.uuid4()
         player_o_key = uuid.uuid4()
@@ -16,8 +19,8 @@ class GameService:
         self.games[game_key] = Game(game_key,
                                     player_x_key,
                                     player_o_key,
-                                    size_x=grid_size,
-                                    size_y=grid_size,
+                                    size_x=grid_size_x,
+                                    size_y=grid_size_y,
                                     dimensions=dimensions)
 
         return GameIdentifiers(game_key,
