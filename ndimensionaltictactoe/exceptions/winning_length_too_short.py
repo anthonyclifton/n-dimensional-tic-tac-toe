@@ -1,0 +1,2 @@
+class WinningLengthTooShortException(Exception):
+    pass

@@ -4,6 +4,8 @@ import uuid
 import pytest
 
 from ndimensionaltictactoe.exceptions.out_of_bounds_exception import OutOfBoundsException
+from ndimensionaltictactoe.exceptions.winning_length_too_long_exception import WinningLengthTooLongException
+from ndimensionaltictactoe.exceptions.winning_length_too_short import WinningLengthTooShortException
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLargeException
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
@@ -22,6 +24,14 @@ class TestGame(unittest.TestCase):
     def test__init__should_raise_exception_when_dimensions_greater_than_two(self):
         with pytest.raises(GridTooLargeException):
             Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY, 3, 3, 3)
+
+    def test__init__should_raise_exception_when_winning_length_too_short(self):
+        with pytest.raises(WinningLengthTooShortException):
+            Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY, 3, 3, 2, 0)
+
+    def test__init__should_raise_exception_when_winning_length_greater_than_shortest_side(self):
+        with pytest.raises(WinningLengthTooLongException):
+            Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY, 3, 4, 2, 4)
 
     def test__get_cell_by_coordinates__returns_mark_at_coordinates(self):
         existing_mark_1 = Mark((0, 0), X_MARK)
