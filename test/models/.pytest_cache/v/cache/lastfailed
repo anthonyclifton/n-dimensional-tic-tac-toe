@@ -1,4 +1,3 @@
 {
-  "test_game.py::TestGame::test__mark_cell_by_coordinates_raises_exception_when_mark_outside": true, 
   "test_grid.py::test__get_mark__returns_mark_at_coordinates": true
 }

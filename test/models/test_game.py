@@ -3,6 +3,7 @@ import uuid
 
 import pytest
 
+from ndimensionaltictactoe.exceptions.out_of_bounds_exception import OutOfBoundsException
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLargeException
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
@@ -50,5 +51,18 @@ class TestGame(unittest.TestCase):
 
         assert actual_mark.value == X_MARK
 
-    # def test__mark_cell_by_coordinates_raises_exception_when_mark_outside():
-    #     pass
+    def test__mark_cell_by_coordinates_raises_exception_when_mark_outside(self):
+        game = Game('test-grid',
+                    PLAYER_X_KEY,
+                    PLAYER_O_KEY)
+        with pytest.raises(OutOfBoundsException):
+            game.mark_cell_by_coordinates((-1, 0), X_MARK)
+
+        with pytest.raises(OutOfBoundsException):
+            game.mark_cell_by_coordinates((0, -1), X_MARK)
+
+        with pytest.raises(OutOfBoundsException):
+            game.mark_cell_by_coordinates((3, 0), X_MARK)
+
+        with pytest.raises(OutOfBoundsException):
+            game.mark_cell_by_coordinates((0, 3), X_MARK)
