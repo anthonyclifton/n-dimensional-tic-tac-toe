@@ -56,11 +56,12 @@ class Game(object):
                self._mark_causes_vertical_win(mark)
 
     def _mark_causes_horizontal_win(self, mark):
+        mark_x = mark.coordinates[0]
         mark_y = mark.coordinates[1]
         horizontal_length = 0
 
         # count left
-        for x in range(mark.coordinates[0] - 1, -1, -1):
+        for x in range(mark_x - 1, -1, -1):
             cell = self.get_cell_by_coordinates((x, mark_y))
             if cell and (cell.value == mark.value):
                 horizontal_length = horizontal_length + 1
@@ -68,7 +69,7 @@ class Game(object):
                 break
 
         # count right
-        for x in range(mark.coordinates[0] + 1, self.size_x, 1):
+        for x in range(mark_x + 1, self.size_x, 1):
             cell = self.get_cell_by_coordinates((x, mark_y))
             if cell and (cell.value == mark.value):
                 horizontal_length = horizontal_length + 1
