@@ -53,7 +53,8 @@ class Game(object):
 
     def mark_causes_win(self, mark):
         return self._mark_causes_horizontal_win(mark) or \
-               self._mark_causes_vertical_win(mark)
+               self._mark_causes_vertical_win(mark) or \
+               self._mark_causes_negative_slope_diagonal_win(mark)
 
     def _mark_causes_horizontal_win(self, mark):
         mark_x = mark.coordinates[0]
@@ -100,3 +101,34 @@ class Game(object):
                 break
 
         return vertical_length + 1 >= self.winning_length
+
+    def _mark_causes_negative_slope_diagonal_win(self, mark):
+        mark_x = mark.coordinates[0]
+        mark_y = mark.coordinates[1]
+        diagonal_length = 0
+
+        # count left and up
+        for pos_mod in range(-1, -1 * max([self.size_x, self.size_y]), -1):
+            check_x = mark_x + pos_mod
+            check_y = mark_y + pos_mod
+            if check_x < 0 or check_y < 0:
+                break
+            cell = self.get_cell_by_coordinates((check_x, check_y))
+            if cell and (cell.value == mark.value):
+                diagonal_length = diagonal_length + 1
+            else:
+                break
+
+        # count right and down
+        for pos_mod in range(1, max([self.size_x, self.size_y]), 1):
+            check_x = mark_x + pos_mod
+            check_y = mark_y + pos_mod
+            if check_x > self.size_x - 1 or check_y > self.size_y - 1:
+                break
+            cell = self.get_cell_by_coordinates((check_x, check_y))
+            if cell and (cell.value == mark.value):
+                diagonal_length = diagonal_length + 1
+            else:
+                break
+
+        return diagonal_length + 1 >= self.winning_length
