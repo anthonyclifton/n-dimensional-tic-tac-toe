@@ -76,3 +76,14 @@ class TestGame(unittest.TestCase):
 
         with pytest.raises(OutOfBoundsException):
             game.mark_cell_by_coordinates((0, 3), X_MARK)
+
+    def test__mark_causes_win__should_return_true_if_horizontal_win(self):
+        game = Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY)
+        game.cells = [
+            Mark((0, 0), X_MARK),
+            Mark((2, 0), X_MARK)
+        ]
+
+        win = game.mark_causes_win(Mark((1, 0), X_MARK))
+
+        assert win

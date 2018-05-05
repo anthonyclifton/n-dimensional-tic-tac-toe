@@ -32,6 +32,7 @@ class Game(object):
         self.player_x_key = player_x_key
         self.player_o_key = player_o_key
         self.cells = []
+        self.winning_length = winning_length
 
     def get_cell_by_coordinates(self, coordinates):
         self._validate_coordinates(coordinates)
@@ -49,3 +50,28 @@ class Game(object):
 
         if coordinates[0] > self.size_x - 1 or coordinates[1] > self.size_y - 1:
             raise OutOfBoundsException()
+
+    def mark_causes_win(self, mark):
+        return self._mark_causes_horizontal_win(mark)
+
+    def _mark_causes_horizontal_win(self, mark):
+        mark_y = mark.coordinates[1]
+        horizontal_length = 0
+
+        # count left
+        for x in range(mark.coordinates[0] - 1, -1, -1):
+            cell = self.get_cell_by_coordinates((x, mark_y))
+            if cell.value == mark.value:
+                horizontal_length = horizontal_length + 1
+            else:
+                break
+
+        # count right
+        for x in range(mark.coordinates[0] + 1, self.size_x, 1):
+            cell = self.get_cell_by_coordinates((x, mark_y))
+            if cell.value == mark.value:
+                horizontal_length = horizontal_length + 1
+            else:
+                break
+
+        return horizontal_length + 1 >= self.winning_length
