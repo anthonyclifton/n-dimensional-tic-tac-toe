@@ -87,3 +87,14 @@ class TestGame(unittest.TestCase):
         win = game.mark_causes_win(Mark((1, 0), X_MARK))
 
         assert win
+
+    def test__mark_causes_win__should_return_true_if_vertical_win(self):
+        game = Game('test-grid', PLAYER_X_KEY, PLAYER_O_KEY)
+        game.cells = [
+            Mark((0, 0), X_MARK),
+            Mark((0, 2), X_MARK)
+        ]
+
+        win = game.mark_causes_win(Mark((0, 1), X_MARK))
+
+        assert win

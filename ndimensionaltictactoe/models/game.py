@@ -52,7 +52,8 @@ class Game(object):
             raise OutOfBoundsException()
 
     def mark_causes_win(self, mark):
-        return self._mark_causes_horizontal_win(mark)
+        return self._mark_causes_horizontal_win(mark) or \
+               self._mark_causes_vertical_win(mark)
 
     def _mark_causes_horizontal_win(self, mark):
         mark_y = mark.coordinates[1]
@@ -61,7 +62,7 @@ class Game(object):
         # count left
         for x in range(mark.coordinates[0] - 1, -1, -1):
             cell = self.get_cell_by_coordinates((x, mark_y))
-            if cell.value == mark.value:
+            if cell and (cell.value == mark.value):
                 horizontal_length = horizontal_length + 1
             else:
                 break
@@ -69,9 +70,32 @@ class Game(object):
         # count right
         for x in range(mark.coordinates[0] + 1, self.size_x, 1):
             cell = self.get_cell_by_coordinates((x, mark_y))
-            if cell.value == mark.value:
+            if cell and (cell.value == mark.value):
                 horizontal_length = horizontal_length + 1
             else:
                 break
 
         return horizontal_length + 1 >= self.winning_length
+
+    def _mark_causes_vertical_win(self, mark):
+        mark_x = mark.coordinates[0]
+        mark_y = mark.coordinates[1]
+        vertical_length = 0
+
+        # count up
+        for y in range(mark_y - 1, -1, -1):
+            cell = self.get_cell_by_coordinates((mark_x, y))
+            if cell and (cell.value == mark.value):
+                vertical_length = vertical_length + 1
+            else:
+                break
+
+        # count down
+        for y in range(mark_y + 1, self.size_y, 1):
+            cell = self.get_cell_by_coordinates((mark_x, y))
+            if cell and (cell.value == mark.value):
+                vertical_length = vertical_length + 1
+            else:
+                break
+
+        return vertical_length + 1 >= self.winning_length
