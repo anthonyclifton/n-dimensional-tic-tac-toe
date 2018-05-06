@@ -1,11 +1,12 @@
 import unittest
 from random import randint
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import pytest
 
 from ndimensionaltictactoe.computation.game_service import GameService
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
+from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
@@ -152,6 +153,27 @@ class TestGameService(unittest.TestCase):
         updated_game = self.game_service.get_game_by_key(game_key)
 
         assert not updated_game.player_x_turn
+
+    def test__mark_cell__should_update_to_player_x_turn_when_player_o_marks(self):
+        dumped_game = self.game_service.create_game()
+        game_key = UUID(dumped_game['key'])
+
+        joined_game = self.game_service.join_game(game_key, 'player_o')
+        player_o_key = UUID(joined_game['player_o']['key'])
+
+        self.game_service.mark_cell(game_key, player_o_key, 0, 0)
+        updated_game = self.game_service.get_game_by_key(game_key)
+
+        assert updated_game.player_x_turn
+
+    def test__mark_cell__should_raise_exception_when_third_player_marks(self):
+        game = self.game_service.create_game()
+        game_key = UUID(game['key'])
+
+        self.game_service.join_game(game_key, 'player_o')
+
+        with pytest.raises(NotValidPlayerException):
+            self.game_service.mark_cell(game_key, uuid4(), 0, 0)
 
     def test__get_games__should_return_all_created_games_summary(self):
         self.game_service.create_game()

@@ -1,6 +1,7 @@
 import uuid
 
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
+from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
@@ -71,4 +72,4 @@ class GameService:
             game.player_x_turn = True
             return PlayerOGameSchema().dump(game)
         else:
-            pass
+            raise NotValidPlayerException
