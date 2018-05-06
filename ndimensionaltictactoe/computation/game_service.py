@@ -2,6 +2,7 @@ import uuid
 
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
+from ndimensionaltictactoe.exceptions.not_your_turn_exception import NotYourTurnException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
@@ -61,13 +62,16 @@ class GameService:
     def mark_cell(self, game_key, player_key, x, y):
         game = self.get_game_by_key(game_key)
 
-        # todo: throw exception if not either player
         # todo: throw exception if it is not players turn yet
         if game.player_x.key == player_key:
+            if not game.player_x_turn:
+                raise NotYourTurnException
             game.mark_cell_by_coordinates(x, y, X_MARK)
             game.player_x_turn = False
             return PlayerXGameSchema().dump(game)
         elif game.player_o and (game.player_o.key == player_key):
+            if game.player_x_turn:
+                raise NotYourTurnException
             game.mark_cell_by_coordinates(x, y, O_MARK)
             game.player_x_turn = True
             return PlayerOGameSchema().dump(game)
