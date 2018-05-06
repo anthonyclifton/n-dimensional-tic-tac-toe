@@ -2,7 +2,7 @@ import uuid
 
 from ndimensionaltictactoe.models.game import Game
 from ndimensionaltictactoe.models.player import Player
-from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema
+from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema
 
 
 class GameService:
@@ -34,6 +34,9 @@ class GameService:
 
     def get_game_by_key(self, key):
         return self.games[key]
+
+    def get_games(self):
+        return GameSummarySchema().dump(self.games.values(), many=True)
 
     def delete_game(self, key):
         del self.games[key]

@@ -80,3 +80,10 @@ class TestGameService(unittest.TestCase):
 
         with pytest.raises(CellInUseException):
             self.game_service.mark_cell(game_key, new_mark)
+
+    def test__get_games__should_return_all_created_games_summary(self):
+        self.game_service.create_game()
+        self.game_service.create_game()
+
+        games_list = self.game_service.get_games()
+        self.assertEqual(len(games_list), 2)
