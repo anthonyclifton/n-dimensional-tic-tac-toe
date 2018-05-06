@@ -14,8 +14,8 @@ class Game(object):
     def __init__(self,
                  name,
                  key,
-                 player_x_key,
-                 player_o_key,
+                 player_x,
+                 player_o,
                  size_x=3,
                  size_y=3,
                  dimensions=2,
@@ -36,8 +36,8 @@ class Game(object):
         self.size_x = size_x
         self.size_y = size_y
         self.dimensions = dimensions
-        self.player_x_key = player_x_key
-        self.player_o_key = player_o_key
+        self.player_x = player_x
+        self.player_o = player_o
         self.cells = []
         self.winning_length = winning_length
         self.state = GAME_CREATED_WAITING

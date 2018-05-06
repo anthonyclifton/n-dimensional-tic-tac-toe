@@ -12,43 +12,44 @@ from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLar
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
 from ndimensionaltictactoe.models.game import Game, GAME_CREATED_WAITING
 from ndimensionaltictactoe.models.mark import Mark
+from ndimensionaltictactoe.models.player import Player
 
-PLAYER_X_KEY = uuid.uuid4()
-PLAYER_O_KEY = uuid.uuid4()
+PLAYER_X = Player(uuid.uuid4(), 'player_x')
+PLAYER_O = Player(uuid.uuid4(), 'player_o')
 
 
 class TestGame(unittest.TestCase):
     def test__init__should_raise_exception_when_dimensions_less_than_two(self):
         with pytest.raises(GridTooSmallException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY, 3, 3, 1)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 1)
 
     def test__init__should_raise_exception_when_dimensions_greater_than_two(self):
         with pytest.raises(GridTooLargeException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY, 3, 3, 3)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 3)
 
     def test__init__should_raise_exception_when_winning_length_too_short(self):
         with pytest.raises(WinningLengthTooShortException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY, 3, 3, 2, 0)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 2, 0)
 
     def test__init__should_raise_exception_when_winning_length_greater_than_shortest_side(self):
         with pytest.raises(WinningLengthTooLongException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY, 3, 4, 2, 4)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 4, 2, 4)
 
     def test__init__should_raise_exception_when_name_is_empty(self):
         with pytest.raises(NoNameException):
-            Game('', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+            Game('', uuid.uuid4(), PLAYER_X, PLAYER_O)
 
         with pytest.raises(NoNameException):
-            Game(None, uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+            Game(None, uuid.uuid4(), PLAYER_X, PLAYER_O)
 
     def test__init__should_start_in_created_waiting_state(self):
-        game = Game('test-game', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-game', uuid.uuid4(), PLAYER_X, PLAYER_O)
         assert game.state == GAME_CREATED_WAITING
 
     def test__get_cell_by_coordinates__returns_mark_at_coordinates(self):
         existing_mark_1 = Mark((0, 0), X_MARK)
         existing_mark_2 = Mark((1, 1), O_MARK)
-        game = Game('test-game', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-game', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.cells.append(existing_mark_1)
         game.cells.append(existing_mark_2)
 
@@ -58,7 +59,7 @@ class TestGame(unittest.TestCase):
 
     def test__get_cell_by_coordinates__returns_none_if_coordinates_are_empty(self):
         existing_mark_1 = Mark((0, 0), X_MARK)
-        game = Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.cells.append(existing_mark_1)
 
         actual_mark = game.get_cell_by_coordinates((1, 1))
@@ -66,7 +67,7 @@ class TestGame(unittest.TestCase):
         assert not actual_mark
 
     def test__mark_cell_by_coordinates__adds_mark_to_cells(self):
-        game = Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.mark_cell_by_coordinates((1, 1), X_MARK)
 
         actual_mark = game.get_cell_by_coordinates((1, 1))
@@ -76,8 +77,8 @@ class TestGame(unittest.TestCase):
     def test__mark_cell_by_coordinates_raises_exception_when_mark_outside(self):
         game = Game('test-grid',
                     uuid.uuid4(),
-                    PLAYER_X_KEY,
-                    PLAYER_O_KEY)
+                    PLAYER_X,
+                    PLAYER_O)
         with pytest.raises(OutOfBoundsException):
             game.mark_cell_by_coordinates((-1, 0), X_MARK)
 
@@ -91,7 +92,7 @@ class TestGame(unittest.TestCase):
             game.mark_cell_by_coordinates((0, 3), X_MARK)
 
     def test__mark_causes_win__should_return_true_if_horizontal_win(self):
-        game = Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.cells = [
             Mark((0, 0), X_MARK),
             Mark((2, 0), X_MARK)
@@ -102,7 +103,7 @@ class TestGame(unittest.TestCase):
         assert win
 
     def test__mark_causes_win__should_return_true_if_vertical_win(self):
-        game = Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.cells = [
             Mark((0, 0), X_MARK),
             Mark((0, 2), X_MARK)
@@ -113,7 +114,7 @@ class TestGame(unittest.TestCase):
         assert win
 
     def test__mark_causes_win__should_return_true_if_negative_slope_diagonal_win(self):
-        game = Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.cells = [
             Mark((0, 0), X_MARK),
             Mark((2, 2), X_MARK)
@@ -124,7 +125,7 @@ class TestGame(unittest.TestCase):
         assert win
 
     def test__mark_causes_win__should_return_true_if_positive_slope_diagonal_win(self):
-        game = Game('test-grid', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        game = Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O)
         game.cells = [
             Mark((0, 2), X_MARK),
             Mark((2, 0), X_MARK)
