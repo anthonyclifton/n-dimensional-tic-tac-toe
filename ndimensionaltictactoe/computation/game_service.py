@@ -60,10 +60,15 @@ class GameService:
     def mark_cell(self, game_key, player_key, x, y):
         game = self.get_game_by_key(game_key)
 
+        # todo: throw exception if not either player
+        # todo: throw exception if it is not players turn yet
         if game.player_x.key == player_key:
             game.mark_cell_by_coordinates(x, y, X_MARK)
+            game.player_x_turn = False
             return PlayerXGameSchema().dump(game)
         elif game.player_o and (game.player_o.key == player_key):
-            pass
+            game.mark_cell_by_coordinates(x, y, O_MARK)
+            game.player_x_turn = True
+            return PlayerOGameSchema().dump(game)
         else:
             pass

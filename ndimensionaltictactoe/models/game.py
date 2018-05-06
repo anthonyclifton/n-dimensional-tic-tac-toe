@@ -43,6 +43,7 @@ class Game(object):
         self.cells = []
         self.winning_length = winning_length
         self.state = GAME_CREATED_WAITING
+        self.player_x_turn = True
 
     def get_cell_by_coordinates(self, x, y):
         self._validate_coordinates(x, y)

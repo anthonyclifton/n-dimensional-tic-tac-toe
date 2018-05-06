@@ -9,7 +9,6 @@ from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInpro
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
-from ndimensionaltictactoe.models.mark import Mark
 
 
 class TestGameService(unittest.TestCase):
@@ -36,6 +35,7 @@ class TestGameService(unittest.TestCase):
         assert game.size_x == 3
         assert game.size_y == 3
         assert game.dimensions == 2
+        assert game.player_x_turn
 
     def test__create_game_should_add_an_arbitrary_sized_game(self):
         random_game_size_x = randint(0, 999)
@@ -119,6 +119,19 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(updated_game['cells'][0]['x'], 1)
         self.assertEqual(updated_game['cells'][0]['y'], 1)
 
+    def test__mark_cell_should_mark_o_when_player_o_is_marking_and_return_updated_game(self):
+        dumped_game = self.game_service.create_game()
+        game_key = UUID(dumped_game['key'])
+
+        joined_game = self.game_service.join_game(game_key, 'player_o')
+        player_o_key = UUID(joined_game['player_o']['key'])
+
+        updated_game, errors = self.game_service.mark_cell(game_key, player_o_key, 1, 1)
+
+        self.assertEqual(updated_game['cells'][0]['value'], O_MARK)
+        self.assertEqual(updated_game['cells'][0]['x'], 1)
+        self.assertEqual(updated_game['cells'][0]['y'], 1)
+
     def test__mark_cell__should_raise_exception_if_cell_already_marked(self):
         dumped_game = self.game_service.create_game()
         game_key = UUID(dumped_game['key'])
@@ -128,6 +141,17 @@ class TestGameService(unittest.TestCase):
 
         with pytest.raises(CellInUseException):
             self.game_service.mark_cell(game_key, player_key, 0, 0)
+
+    def test__mark_cell__should_update_to_player_o_turn_when_player_x_marks(self):
+        dumped_game = self.game_service.create_game()
+        game_key = UUID(dumped_game['key'])
+        player_x_key = UUID(dumped_game['player_x']['key'])
+
+        self.game_service.join_game(game_key, 'player_o')
+        self.game_service.mark_cell(game_key, player_x_key, 0, 0)
+        updated_game = self.game_service.get_game_by_key(game_key)
+
+        assert not updated_game.player_x_turn
 
     def test__get_games__should_return_all_created_games_summary(self):
         self.game_service.create_game()
