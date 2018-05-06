@@ -1,6 +1,7 @@
 import uuid
 
 from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
 from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema
 
@@ -42,6 +43,13 @@ class GameService:
     def delete_game(self, key):
         del self.games[key]
 
-    def mark_cell(self, key, mark):
-        game = self.get_game_by_key(key)
-        game.mark_cell_by_coordinates(mark.coordinates, mark.value)
+    def mark_cell(self, game_key, player_key, x, y):
+        game = self.get_game_by_key(game_key)
+
+        if game.player_x.key == player_key:
+            game.mark_cell_by_coordinates(x, y, X_MARK)
+            return PlayerXGameSchema().dump(game)
+        elif game.player_o and (game.player_o.key == player_key):
+            pass
+        else:
+            pass

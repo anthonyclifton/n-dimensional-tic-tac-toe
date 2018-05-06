@@ -1,8 +1,10 @@
 from marshmallow import Schema, fields
+from marshmallow.fields import Field
 
 
 class MarkSchema(Schema):
-    coordinates = fields.Number(many=True)
+    x = fields.Number()
+    y = fields.Number()
     value = fields.Number()
 
 

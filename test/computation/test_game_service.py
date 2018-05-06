@@ -64,28 +64,39 @@ class TestGameService(unittest.TestCase):
             self.game_service.get_game_by_key(game_key)
 
     def test__mark_cell__should_add_the_mark_to_the_cell(self):
-        mark = Mark((0, 0), X_MARK)
         dumped_game = self.game_service.create_game()
         game_key = UUID(dumped_game['key'])
+        player_key = UUID(dumped_game['player_x']['key'])
 
-        self.game_service.mark_cell(game_key, mark)
+        self.game_service.mark_cell(game_key, player_key, 0, 0)
 
         game = self.game_service.get_game_by_key(game_key)
 
         first_cell = game.cells[0]
-        self.assertEqual(first_cell.coordinates, mark.coordinates)
-        self.assertEqual(first_cell.value, mark.value)
+        self.assertEqual(first_cell.x, 0)
+        self.assertEqual(first_cell.y, 0)
+        self.assertEqual(first_cell.value, X_MARK)
 
-    def test__mark_cell__should_raise_exception_if_cell_already_marked(self):
-        existing_mark = Mark((0, 0), X_MARK)
-        new_mark = Mark((0, 0), O_MARK)
-
+    def test__mark_cell_should_mark_x_when_player_x_is_marking_and_return_updated_game(self):
         dumped_game = self.game_service.create_game()
         game_key = UUID(dumped_game['key'])
-        self.game_service.mark_cell(game_key, existing_mark)
+        player_key = UUID(dumped_game['player_x']['key'])
+
+        updated_game, errors = self.game_service.mark_cell(game_key, player_key, 1, 1)
+
+        self.assertEqual(updated_game['cells'][0]['value'], X_MARK)
+        self.assertEqual(updated_game['cells'][0]['x'], 1)
+        self.assertEqual(updated_game['cells'][0]['y'], 1)
+
+    def test__mark_cell__should_raise_exception_if_cell_already_marked(self):
+        dumped_game = self.game_service.create_game()
+        game_key = UUID(dumped_game['key'])
+        player_key = UUID(dumped_game['player_x']['key'])
+
+        self.game_service.mark_cell(game_key, player_key, 0, 0)
 
         with pytest.raises(CellInUseException):
-            self.game_service.mark_cell(game_key, new_mark)
+            self.game_service.mark_cell(game_key, player_key, 0, 0)
 
     def test__get_games__should_return_all_created_games_summary(self):
         self.game_service.create_game()

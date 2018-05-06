@@ -43,21 +43,22 @@ class Game(object):
         self.winning_length = winning_length
         self.state = GAME_CREATED_WAITING
 
-    def get_cell_by_coordinates(self, coordinates):
-        self._validate_coordinates(coordinates)
-        return next((mark for mark in self.cells if mark.coordinates == coordinates), None)
+    def get_cell_by_coordinates(self, x, y):
+        self._validate_coordinates(x, y)
+        return next((mark for mark in self.cells
+                     if mark.x == x and mark.y == y), None)
 
-    def mark_cell_by_coordinates(self, coordinates, mark):
-        if not self.get_cell_by_coordinates(coordinates):
-            self.cells.append(Mark(coordinates, mark))
+    def mark_cell_by_coordinates(self, x, y, mark):
+        if not self.get_cell_by_coordinates(x, y):
+            self.cells.append(Mark(x, y, mark))
         else:
             raise CellInUseException
 
-    def _validate_coordinates(self, coordinates):
-        if coordinates[0] < 0 or coordinates[1] < 0:
+    def _validate_coordinates(self, x, y):
+        if x < 0 or y < 0:
             raise OutOfBoundsException()
 
-        if coordinates[0] > self.size_x - 1 or coordinates[1] > self.size_y - 1:
+        if x > self.size_x - 1 or y > self.size_y - 1:
             raise OutOfBoundsException()
 
     def mark_causes_win(self, mark):
@@ -67,21 +68,19 @@ class Game(object):
                self._mark_causes_positive_slope_diagonal_win(mark)
 
     def _mark_causes_horizontal_win(self, mark):
-        mark_x = mark.coordinates[0]
-        mark_y = mark.coordinates[1]
         horizontal_length = 0
 
         # count left
-        for x in range(mark_x - 1, -1, -1):
-            cell = self.get_cell_by_coordinates((x, mark_y))
+        for x in range(mark.x - 1, -1, -1):
+            cell = self.get_cell_by_coordinates(x, mark.y)
             if cell and (cell.value == mark.value):
                 horizontal_length = horizontal_length + 1
             else:
                 break
 
         # count right
-        for x in range(mark_x + 1, self.size_x, 1):
-            cell = self.get_cell_by_coordinates((x, mark_y))
+        for x in range(mark.x + 1, self.size_x, 1):
+            cell = self.get_cell_by_coordinates(x, mark.y)
             if cell and (cell.value == mark.value):
                 horizontal_length = horizontal_length + 1
             else:
@@ -90,21 +89,19 @@ class Game(object):
         return horizontal_length + 1 >= self.winning_length
 
     def _mark_causes_vertical_win(self, mark):
-        mark_x = mark.coordinates[0]
-        mark_y = mark.coordinates[1]
         vertical_length = 0
 
         # count up
-        for y in range(mark_y - 1, -1, -1):
-            cell = self.get_cell_by_coordinates((mark_x, y))
+        for y in range(mark.y - 1, -1, -1):
+            cell = self.get_cell_by_coordinates(mark.x, y)
             if cell and (cell.value == mark.value):
                 vertical_length = vertical_length + 1
             else:
                 break
 
         # count down
-        for y in range(mark_y + 1, self.size_y, 1):
-            cell = self.get_cell_by_coordinates((mark_x, y))
+        for y in range(mark.y + 1, self.size_y, 1):
+            cell = self.get_cell_by_coordinates(mark.x, y)
             if cell and (cell.value == mark.value):
                 vertical_length = vertical_length + 1
             else:
@@ -113,17 +110,15 @@ class Game(object):
         return vertical_length + 1 >= self.winning_length
 
     def _mark_causes_negative_slope_diagonal_win(self, mark):
-        mark_x = mark.coordinates[0]
-        mark_y = mark.coordinates[1]
         diagonal_length = 0
 
         # count left and up
         for pos_mod in range(-1, -1 * max([self.size_x, self.size_y]), -1):
-            check_x = mark_x + pos_mod
-            check_y = mark_y + pos_mod
+            check_x = mark.x + pos_mod
+            check_y = mark.y + pos_mod
             if check_x < 0 or check_y < 0:
                 break
-            cell = self.get_cell_by_coordinates((check_x, check_y))
+            cell = self.get_cell_by_coordinates(check_x, check_y)
             if cell and (cell.value == mark.value):
                 diagonal_length = diagonal_length + 1
             else:
@@ -131,11 +126,11 @@ class Game(object):
 
         # count right and down
         for pos_mod in range(1, max([self.size_x, self.size_y]), 1):
-            check_x = mark_x + pos_mod
-            check_y = mark_y + pos_mod
+            check_x = mark.x + pos_mod
+            check_y = mark.y + pos_mod
             if check_x > self.size_x - 1 or check_y > self.size_y - 1:
                 break
-            cell = self.get_cell_by_coordinates((check_x, check_y))
+            cell = self.get_cell_by_coordinates(check_x, check_y)
             if cell and (cell.value == mark.value):
                 diagonal_length = diagonal_length + 1
             else:
@@ -144,17 +139,15 @@ class Game(object):
         return diagonal_length + 1 >= self.winning_length
 
     def _mark_causes_positive_slope_diagonal_win(self, mark):
-        mark_x = mark.coordinates[0]
-        mark_y = mark.coordinates[1]
         diagonal_length = 0
 
         # count left and down
         for pos_mod in range(1, max([self.size_x, self.size_y]), 1):
-            check_x = mark_x - pos_mod
-            check_y = mark_y + pos_mod
+            check_x = mark.x - pos_mod
+            check_y = mark.y + pos_mod
             if check_x < 0 or check_y > self.size_y - 1:
                 break
-            cell = self.get_cell_by_coordinates((check_x, check_y))
+            cell = self.get_cell_by_coordinates(check_x, check_y)
             if cell and (cell.value == mark.value):
                 diagonal_length = diagonal_length + 1
             else:
@@ -162,11 +155,11 @@ class Game(object):
 
         # count right and up
         for pos_mod in range(1, max([self.size_x, self.size_y]), 1):
-            check_x = mark_x + pos_mod
-            check_y = mark_y - pos_mod
+            check_x = mark.x + pos_mod
+            check_y = mark.y - pos_mod
             if check_x > self.size_x - 1 or check_y < 0:
                 break
-            cell = self.get_cell_by_coordinates((check_x, check_y))
+            cell = self.get_cell_by_coordinates(check_x, check_y)
             if cell and (cell.value == mark.value):
                 diagonal_length = diagonal_length + 1
             else:
