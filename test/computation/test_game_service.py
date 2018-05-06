@@ -7,7 +7,7 @@ import pytest
 from ndimensionaltictactoe.computation.game_service import GameService
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
-from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.mark import Mark
 
 
@@ -51,6 +51,19 @@ class TestGameService(unittest.TestCase):
             name='user-defined-name'
         )
         assert dumped_game['name'] == 'user-defined-name'
+
+    def test__join_game__should_add_player_o_to_game(self):
+        game = self.game_service.create_game()
+        game_key = UUID(game['key'])
+
+        self.game_service.join_game(game_key, 'test name')
+
+        updated_game = self.game_service.get_game_by_key(game_key)
+
+        assert updated_game.player_o
+        assert UUID(str(updated_game.player_o.key))
+        assert updated_game.player_o.name == 'test name'
+        assert updated_game.state == GAME_INPROGRESS
 
     def test__delete_game__should_remove_game_from_service(self):
         dumped_game = self.game_service.create_game()

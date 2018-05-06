@@ -1,6 +1,6 @@
 import uuid
 
-from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
 from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema
@@ -33,6 +33,11 @@ class GameService:
         dumped_game, errors = PlayerXGameSchema().dump(new_game)
 
         return dumped_game
+
+    def join_game(self, key, player_name):
+        game = self.get_game_by_key(key)
+        game.player_o = Player(uuid.uuid4(), player_name)
+        game.state = GAME_INPROGRESS
 
     def get_game_by_key(self, key):
         return self.games[key]

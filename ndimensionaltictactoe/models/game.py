@@ -8,6 +8,7 @@ from ndimensionaltictactoe.exceptions.winning_length_too_short import WinningLen
 from ndimensionaltictactoe.models.mark import Mark
 
 GAME_CREATED_WAITING = 0
+GAME_INPROGRESS = 1
 GAME_COMPLETED = 4
 
 
