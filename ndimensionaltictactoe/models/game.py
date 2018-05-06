@@ -7,6 +7,8 @@ from ndimensionaltictactoe.exceptions.winning_length_too_long_exception import W
 from ndimensionaltictactoe.exceptions.winning_length_too_short import WinningLengthTooShortException
 from ndimensionaltictactoe.models.mark import Mark
 
+GAME_CREATED_WAITING = 0
+GAME_COMPLETED = 4
 
 class Game(object):
     def __init__(self,
@@ -38,6 +40,7 @@ class Game(object):
         self.player_o_key = player_o_key
         self.cells = []
         self.winning_length = winning_length
+        self.state = GAME_CREATED_WAITING
 
     def get_cell_by_coordinates(self, coordinates):
         self._validate_coordinates(coordinates)

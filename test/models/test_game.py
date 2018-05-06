@@ -10,7 +10,7 @@ from ndimensionaltictactoe.exceptions.winning_length_too_short import WinningLen
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLargeException
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
-from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.game import Game, GAME_CREATED_WAITING
 from ndimensionaltictactoe.models.mark import Mark
 
 PLAYER_X_KEY = uuid.uuid4()
@@ -40,6 +40,10 @@ class TestGame(unittest.TestCase):
 
         with pytest.raises(NoNameException):
             Game(None, uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+
+    def test__init__should_start_in_created_waiting_state(self):
+        game = Game('test-game', uuid.uuid4(), PLAYER_X_KEY, PLAYER_O_KEY)
+        assert game.state == GAME_CREATED_WAITING
 
     def test__get_cell_by_coordinates__returns_mark_at_coordinates(self):
         existing_mark_1 = Mark((0, 0), X_MARK)
