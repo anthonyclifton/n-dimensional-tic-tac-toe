@@ -1,8 +1,8 @@
 import uuid
 
 from ndimensionaltictactoe.models.game import Game
-from ndimensionaltictactoe.models.game_identifiers import GameIdentifiers
 from ndimensionaltictactoe.models.player import Player
+from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema
 
 
 class GameService:
@@ -18,17 +18,19 @@ class GameService:
         player_x = Player(uuid.uuid4(), 'player_x')
         player_o = None
 
-        self.games[game_key] = Game(game_name,
-                                    game_key,
-                                    player_x,
-                                    player_o,
-                                    size_x=grid_size_x,
-                                    size_y=grid_size_y,
-                                    dimensions=dimensions)
+        new_game = Game(game_name,
+                        game_key,
+                        player_x,
+                        player_o,
+                        size_x=grid_size_x,
+                        size_y=grid_size_y,
+                        dimensions=dimensions)
 
-        return GameIdentifiers(game_key,
-                               player_x.key,
-                               player_x.key)
+        self.games[game_key] = new_game
+
+        dumped_game, errors = PlayerXGameSchema().dump(new_game)
+
+        return dumped_game
 
     def get_game_by_key(self, key):
         return self.games[key]
@@ -39,5 +41,3 @@ class GameService:
     def mark_cell(self, key, mark):
         game = self.get_game_by_key(key)
         game.mark_cell_by_coordinates(mark.coordinates, mark.value)
-
-

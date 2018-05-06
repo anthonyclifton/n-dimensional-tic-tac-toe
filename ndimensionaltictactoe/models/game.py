@@ -10,6 +10,7 @@ from ndimensionaltictactoe.models.mark import Mark
 GAME_CREATED_WAITING = 0
 GAME_COMPLETED = 4
 
+
 class Game(object):
     def __init__(self,
                  name,

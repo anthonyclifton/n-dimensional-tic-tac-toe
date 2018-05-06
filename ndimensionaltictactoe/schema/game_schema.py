@@ -1,16 +1,24 @@
 from marshmallow import Schema, fields
 
-from ndimensionaltictactoe.models.mark import Mark
+
+class MarkSchema(Schema):
+    coordinates = fields.Number(many=True)
+    value = fields.Number()
+
+
+class PlayerSchema(Schema):
+    key = fields.UUID()
+    name = fields.String()
 
 
 class PlayerXGameSchema(Schema):
-    name = fields.String
-    key = fields.UUID
-    size_x = fields.Number
-    size_y = fields.Number
-    player_x_key = fields.UUID
-    cells = fields.Nested(Mark)
-    winning_length = fields.Number
+    name = fields.String()
+    key = fields.UUID()
+    size_x = fields.Number()
+    size_y = fields.Number()
+    player_x = fields.Nested(PlayerSchema)
+    cells = fields.Nested(MarkSchema, many=True)
+    winning_length = fields.Number()
 
 
 class PlayerOGameSchema(Schema):
@@ -18,6 +26,6 @@ class PlayerOGameSchema(Schema):
     key = fields.UUID
     size_x = fields.Number
     size_y = fields.Number
-    player_x_key = fields.UUID
-    cells = fields.Nested(Mark)
+    player_o = fields.Nested(PlayerSchema)
+    cells = fields.Nested(MarkSchema, many=True)
     winning_length = fields.Number
