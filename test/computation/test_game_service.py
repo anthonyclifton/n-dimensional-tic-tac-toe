@@ -5,6 +5,7 @@ from uuid import UUID
 import pytest
 
 from ndimensionaltictactoe.computation.game_service import GameService
+from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
@@ -56,7 +57,7 @@ class TestGameService(unittest.TestCase):
         game = self.game_service.create_game()
         game_key = UUID(game['key'])
 
-        self.game_service.join_game(game_key, 'test name')
+        dumped_game = self.game_service.join_game(game_key, 'test name')
 
         updated_game = self.game_service.get_game_by_key(game_key)
 
@@ -64,6 +65,23 @@ class TestGameService(unittest.TestCase):
         assert UUID(str(updated_game.player_o.key))
         assert updated_game.player_o.name == 'test name'
         assert updated_game.state == GAME_INPROGRESS
+
+        self.assertEqual(dumped_game['name'], 'no-name-game')
+        assert UUID(dumped_game['key'])
+        self.assertEqual(dumped_game['size_x'], 3)
+        self.assertEqual(dumped_game['size_y'], 3)
+        assert UUID(dumped_game['player_o']['key'])
+        self.assertEqual(dumped_game['player_o']['name'], updated_game.player_o.name)
+        self.assertEqual(dumped_game['cells'], [])
+        self.assertEqual(dumped_game['winning_length'], 3)
+
+    def test__join_game__should_raise_exception_when_game_already_in_progress(self):
+        game = self.game_service.create_game()
+        game_key = UUID(game['key'])
+        self.game_service.join_game(game_key, 'player who is on time')
+
+        with pytest.raises(GameInprogressException):
+            self.game_service.join_game(game_key, 'player who is too late')
 
     def test__delete_game__should_remove_game_from_service(self):
         dumped_game = self.game_service.create_game()

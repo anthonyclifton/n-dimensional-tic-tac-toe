@@ -1,9 +1,10 @@
 import uuid
 
+from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
-from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema
+from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema
 
 
 class GameService:
@@ -36,8 +37,16 @@ class GameService:
 
     def join_game(self, key, player_name):
         game = self.get_game_by_key(key)
+
+        if game.state == GAME_INPROGRESS:
+            raise GameInprogressException
+
         game.player_o = Player(uuid.uuid4(), player_name)
         game.state = GAME_INPROGRESS
+
+        dumped_game, errors = PlayerOGameSchema().dump(game)
+
+        return dumped_game
 
     def get_game_by_key(self, key):
         return self.games[key]
