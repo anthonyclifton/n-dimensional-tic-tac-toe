@@ -1,6 +1,7 @@
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.exceptions.grid_too_large_exception import GridTooLargeException
 from ndimensionaltictactoe.exceptions.grid_too_small_exception import GridTooSmallException
+from ndimensionaltictactoe.exceptions.no_name_exception import NoNameException
 from ndimensionaltictactoe.exceptions.out_of_bounds_exception import OutOfBoundsException
 from ndimensionaltictactoe.exceptions.winning_length_too_long_exception import WinningLengthTooLongException
 from ndimensionaltictactoe.exceptions.winning_length_too_short import WinningLengthTooShortException
@@ -9,6 +10,7 @@ from ndimensionaltictactoe.models.mark import Mark
 
 class Game(object):
     def __init__(self,
+                 name,
                  key,
                  player_x_key,
                  player_o_key,
@@ -16,6 +18,8 @@ class Game(object):
                  size_y=3,
                  dimensions=2,
                  winning_length=3):
+        if not name:
+            raise NoNameException
         if dimensions < 2:
             raise GridTooSmallException
         if dimensions > 2:
@@ -25,6 +29,7 @@ class Game(object):
         if winning_length > min([size_x, size_y]):
             raise WinningLengthTooLongException
 
+        self.name = name
         self.key = key
         self.size_x = size_x
         self.size_y = size_y

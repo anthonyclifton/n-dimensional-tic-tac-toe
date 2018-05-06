@@ -1,0 +1,2 @@
+class NoNameException(Exception):
+    pass

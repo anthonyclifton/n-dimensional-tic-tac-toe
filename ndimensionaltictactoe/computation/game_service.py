@@ -12,11 +12,13 @@ class GameService:
                     grid_size_x=3,
                     grid_size_y=3,
                     dimensions=2):
+        game_name = 'game'
         game_key = uuid.uuid4()
         player_x_key = uuid.uuid4()
         player_o_key = uuid.uuid4()
 
-        self.games[game_key] = Game(game_key,
+        self.games[game_key] = Game(game_name,
+                                    game_key,
                                     player_x_key,
                                     player_o_key,
                                     size_x=grid_size_x,
