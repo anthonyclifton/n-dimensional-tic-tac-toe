@@ -62,7 +62,6 @@ class GameService:
     def mark_cell(self, game_key, player_key, x, y):
         game = self.get_game_by_key(game_key)
 
-        # todo: throw exception if it is not players turn yet
         if game.player_x.key == player_key:
             if not game.player_x_turn:
                 raise NotYourTurnException
