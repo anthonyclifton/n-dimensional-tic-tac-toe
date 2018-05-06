@@ -10,15 +10,16 @@ class GameService:
         self.games = {}
 
     def create_game(self,
+                    name='no-name-game',
                     grid_size_x=3,
                     grid_size_y=3,
                     dimensions=2):
-        game_name = 'game'
+
         game_key = uuid.uuid4()
         player_x = Player(uuid.uuid4(), 'player_x')
         player_o = None
 
-        new_game = Game(game_name,
+        new_game = Game(name,
                         game_key,
                         player_x,
                         player_o,

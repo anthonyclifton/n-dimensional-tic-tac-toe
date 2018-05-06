@@ -17,7 +17,7 @@ class TestGameService(unittest.TestCase):
 
     def test__create_game__should_return_a_dictionary(self):
         game = self.game_service.create_game()
-        self.assertEqual(game['name'], 'game')
+        self.assertEqual(game['name'], 'no-name-game')
         assert UUID(game['key'])
         self.assertEqual(game['size_x'], 3)
         self.assertEqual(game['size_y'], 3)
@@ -45,6 +45,12 @@ class TestGameService(unittest.TestCase):
         game = self.game_service.get_game_by_key(UUID(dumped_game['key']))
         assert game.size_x == random_game_size_x
         assert game.size_y == random_game_size_y
+
+    def test__create_game_should_accept_a_user_supplied_game_name(self):
+        dumped_game = self.game_service.create_game(
+            name='user-defined-name'
+        )
+        assert dumped_game['name'] == 'user-defined-name'
 
     def test__delete_game__should_remove_game_from_service(self):
         dumped_game = self.game_service.create_game()
