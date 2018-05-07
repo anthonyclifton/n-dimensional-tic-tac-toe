@@ -3,4 +3,5 @@ gunicorn==19.4.5
 pytest
 numpy
 marshmallow
+requests>=2.18.4
 

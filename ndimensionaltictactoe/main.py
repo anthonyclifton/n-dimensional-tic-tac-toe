@@ -1,3 +1,8 @@
+from time import sleep
+from uuid import uuid4
+
+import requests
+
 from common import notify_error, log_api_call
 from flask import Flask
 from flask import jsonify
@@ -44,5 +49,19 @@ def ndimensionaltictactoe_list_api():
         return notify_error(ex, HTTP_ERROR_SERVER)
 
 
+@app.route('/ping', methods=['POST'])
+def ping():
+    print("Received ping request, waiting 5 seconds and responding...")
+    sleep(5)
+
+    url = 'http://localhost:3333/pong'
+    payload = {
+        'myurl': 'my own url',
+        'token': uuid4()
+    }
+
+    requests.post(url, data=payload)
+
+
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=3334)
