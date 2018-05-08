@@ -10,7 +10,8 @@ from flask import jsonify
 from flask import request
 
 from ndimensionaltictactoe.ndimensionaltictactoe import ndimensionaltictactoe_call, ndimensionaltictactoe_list
-from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema
+from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema, \
+    MarkCellRequestSchema
 from ndimensionaltictactoe.computation.game_service import GameService
 
 app = Flask("ndimensionaltictactoe")
@@ -74,6 +75,24 @@ def join():
     join_game_request, errors = JoinGameRequestSchema().load(join_game_json)
     game = game_service.join_game(join_game_request['game_key'],
                                   join_game_request['player_name'])
+
+    response = Response(
+        response=json.dumps(game),
+        status=200,
+        mimetype='application/json'
+    )
+
+    return response
+
+
+@app.route('/markcell', methods=['POST'])
+def mark_cell():
+    mark_cell_json = request.get_json(silent=True)
+    mark_cell_request, errors = MarkCellRequestSchema().load(mark_cell_json)
+    game = game_service.mark_cell(mark_cell_request['game_key'],
+                                  mark_cell_request['player_key'],
+                                  mark_cell_request['x'],
+                                  mark_cell_request['y'])
 
     response = Response(
         response=json.dumps(game),
