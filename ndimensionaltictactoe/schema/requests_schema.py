@@ -5,3 +5,9 @@ class CreateGameRequestSchema(Schema):
     game_name = fields.String()
     player_name = fields.String()
     update_url = fields.String()
+
+
+class JoinGameRequestSchema(Schema):
+    game_key = fields.UUID()
+    player_name = fields.String()
+    update_url = fields.String()

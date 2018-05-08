@@ -10,7 +10,7 @@ from flask import jsonify
 from flask import request
 
 from ndimensionaltictactoe.ndimensionaltictactoe import ndimensionaltictactoe_call, ndimensionaltictactoe_list
-from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema
+from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema
 from ndimensionaltictactoe.computation.game_service import GameService
 
 app = Flask("ndimensionaltictactoe")
@@ -58,6 +58,22 @@ def create():
     create_game_json = request.get_json(silent=True)
     create_game_request, errors = CreateGameRequestSchema().load(create_game_json)
     game = game_service.create_game(create_game_request['game_name'])
+
+    response = Response(
+        response=json.dumps(game),
+        status=200,
+        mimetype='application/json'
+    )
+
+    return response
+
+
+@app.route('/join', methods=['POST'])
+def join():
+    join_game_json = request.get_json(silent=True)
+    join_game_request, errors = JoinGameRequestSchema().load(join_game_json)
+    game = game_service.join_game(join_game_request['game_key'],
+                                  join_game_request['player_name'])
 
     response = Response(
         response=json.dumps(game),
