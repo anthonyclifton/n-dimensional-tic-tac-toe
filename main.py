@@ -1,10 +1,11 @@
+import json
 from time import sleep
 from uuid import uuid4
 
 import requests
 
 from ndimensionaltictactoe.common import notify_error, log_api_call
-from flask import Flask
+from flask import Flask, Response
 from flask import jsonify
 from flask import request
 
@@ -55,8 +56,16 @@ def ndimensionaltictactoe_list_api():
 @app.route('/create', methods=['POST'])
 def create():
     create_game_json = request.get_json(silent=True)
-    create_game_request = CreateGameRequestSchema().load(create_game_json)
-    return "something"
+    create_game_request, errors = CreateGameRequestSchema().load(create_game_json)
+    print create_game_request
+    game = game_service.create_game(create_game_request['game_name'])
+
+    response = Response(
+        response=json.dumps(game),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 if __name__ == '__main__':
