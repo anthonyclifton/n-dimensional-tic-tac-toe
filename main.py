@@ -57,7 +57,6 @@ def ndimensionaltictactoe_list_api():
 def create():
     create_game_json = request.get_json(silent=True)
     create_game_request, errors = CreateGameRequestSchema().load(create_game_json)
-    print create_game_request
     game = game_service.create_game(create_game_request['game_name'])
 
     response = Response(
@@ -65,6 +64,20 @@ def create():
         status=200,
         mimetype='application/json'
     )
+
+    return response
+
+
+@app.route('/games', methods=['GET'])
+def get_games():
+    games = game_service.get_games()
+
+    response = Response(
+        response=json.dumps(games),
+        status=200,
+        mimetype='application/json'
+    )
+
     return response
 
 
