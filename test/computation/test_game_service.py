@@ -18,10 +18,12 @@ class TestGameService(unittest.TestCase):
     def setUp(self):
         self.game_name = 'Test Game'
         self.player_x_name = 'Test Player X'
+        self.update_url = 'http://domain/update'
         self.game_service = GameService()
 
         self.game = self.game_service.create_game(self.game_name,
-                                                  self.player_x_name)
+                                                  self.player_x_name,
+                                                  self.update_url)
 
         self.game_key = UUID(self.game['key'])
         self.player_x_key = UUID(self.game['player_x']['key'])
@@ -50,6 +52,7 @@ class TestGameService(unittest.TestCase):
         custom_sized_game = self.game_service.create_game(
             self.game_name,
             self.player_x_name,
+            self.update_url,
             grid_size_x=random_game_size_x,
             grid_size_y=random_game_size_y)
         game = self.game_service.get_game_by_key(UUID(custom_sized_game['key']))
@@ -175,7 +178,9 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 1)
 
     def test__get_games__should_return_all_created_games_summary(self):
-        self.game_service.create_game('Test Game 2', self.player_x_name)
+        self.game_service.create_game('Test Game 2',
+                                      self.player_x_name,
+                                      self.update_url)
 
         games_list = self.game_service.get_games()
 
