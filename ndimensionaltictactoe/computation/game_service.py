@@ -16,12 +16,13 @@ class GameService:
 
     def create_game(self,
                     game_name,
+                    player_name,
                     grid_size_x=3,
                     grid_size_y=3,
                     dimensions=2):
 
         game_key = uuid.uuid4()
-        player_x = Player(uuid.uuid4(), 'player_x', 'no-update-url')
+        player_x = Player(uuid.uuid4(), player_name, 'no-update-url')
         player_o = None
 
         new_game = Game(game_name,

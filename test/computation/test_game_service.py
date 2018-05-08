@@ -17,8 +17,12 @@ from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 class TestGameService(unittest.TestCase):
     def setUp(self):
         self.game_name = 'Test Game'
+        self.player_x_name = 'Test Player X'
         self.game_service = GameService()
-        self.game = self.game_service.create_game(self.game_name)
+
+        self.game = self.game_service.create_game(self.game_name,
+                                                  self.player_x_name)
+
         self.game_key = UUID(self.game['key'])
         self.player_x_key = UUID(self.game['player_x']['key'])
 
@@ -26,7 +30,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(self.game['name'], self.game_name)
         self.assertEqual(self.game['size_x'], 3)
         self.assertEqual(self.game['size_y'], 3)
-        self.assertEqual(self.game['player_x']['name'], 'player_x')
+        self.assertEqual(self.game['player_x']['name'], self.player_x_name)
         self.assertEqual(self.game['cells'], [])
         self.assertEqual(self.game['winning_length'], 3)
 
@@ -44,7 +48,8 @@ class TestGameService(unittest.TestCase):
         random_game_size_x = randint(0, 999)
         random_game_size_y = randint(0, 999)
         custom_sized_game = self.game_service.create_game(
-            'Test Game',
+            self.game_name,
+            self.player_x_name,
             grid_size_x=random_game_size_x,
             grid_size_y=random_game_size_y)
         game = self.game_service.get_game_by_key(UUID(custom_sized_game['key']))
@@ -170,7 +175,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 1)
 
     def test__get_games__should_return_all_created_games_summary(self):
-        self.game_service.create_game('Test Game 2')
+        self.game_service.create_game('Test Game 2', self.player_x_name)
 
         games_list = self.game_service.get_games()
 
