@@ -60,13 +60,15 @@ class TestGameService(unittest.TestCase):
         assert game.size_y == random_game_size_y
 
     def test__join_game__should_add_player_o_to_game(self):
-        joined_game = self.game_service.join_game(self.game_key, 'test name')
+        joined_game = self.game_service.join_game(self.game_key,
+                                                  'Test Player O',
+                                                  self.update_url)
 
         updated_game = self.game_service.get_game_by_key(self.game_key)
 
         assert updated_game.player_o
         assert UUID(str(updated_game.player_o.key))
-        assert updated_game.player_o.name == 'test name'
+        assert updated_game.player_o.name == 'Test Player O'
         assert updated_game.state == GAME_INPROGRESS
 
         self.assertEqual(joined_game['name'], self.game_name)
@@ -79,10 +81,14 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(joined_game['winning_length'], 3)
 
     def test__join_game__should_raise_exception_when_game_already_in_progress(self):
-        self.game_service.join_game(self.game_key, 'player who is on time')
+        self.game_service.join_game(self.game_key,
+                                    'player who is on time',
+                                    self.update_url)
 
         with pytest.raises(GameInprogressException):
-            self.game_service.join_game(self.game_key, 'player who is too late')
+            self.game_service.join_game(self.game_key,
+                                        'player who is too late',
+                                        self.update_url)
 
     def test__delete_game__should_remove_game_from_service(self):
         assert self.game_service.get_game_by_key(self.game_key)
@@ -93,7 +99,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.get_game_by_key(self.game_key)
 
     def test__mark_cell__should_add_the_mark_to_the_cell(self):
-        self.game_service.join_game(self.game_key, "second player")
+        self.game_service.join_game(self.game_key, "second player", self.update_url)
 
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
 
@@ -105,7 +111,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(first_cell.value, X_MARK)
 
     def test__mark_cell_should_mark_x_when_player_x_is_marking_and_return_updated_game(self):
-        self.game_service.join_game(self.game_key, "second player")
+        self.game_service.join_game(self.game_key, "second player", self.update_url)
 
         updated_game, errors = self.game_service.mark_cell(self.game_key,
                                                            self.player_x_key, 1, 1)
@@ -115,7 +121,9 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(updated_game['cells'][0]['y'], 1)
 
     def test__mark_cell_should_mark_o_when_player_o_is_marking_and_return_updated_game(self):
-        joined_game = self.game_service.join_game(self.game_key, 'player_o')
+        joined_game = self.game_service.join_game(self.game_key,
+                                                  'player_o',
+                                                  self.update_url)
         player_o_key = UUID(joined_game['player_o']['key'])
 
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
@@ -126,7 +134,9 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(updated_game['cells'][1]['y'], 1)
 
     def test__mark_cell__should_raise_exception_if_cell_already_marked(self):
-        joined_game = self.game_service.join_game(self.game_key, 'player_o')
+        joined_game = self.game_service.join_game(self.game_key,
+                                                  'player_o',
+                                                  self.update_url)
         player_o_key = UUID(joined_game['player_o']['key'])
 
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
@@ -135,14 +145,16 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(self.game_key, player_o_key, 0, 0)
 
     def test__mark_cell__should_update_to_player_o_turn_when_player_x_marks(self):
-        self.game_service.join_game(self.game_key, 'player_o')
+        self.game_service.join_game(self.game_key, 'player_o', self.update_url)
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
         updated_game = self.game_service.get_game_by_key(self.game_key)
 
         assert not updated_game.player_x_turn
 
     def test__mark_cell__should_update_to_player_x_turn_when_player_o_marks(self):
-        joined_game = self.game_service.join_game(self.game_key, 'player_o')
+        joined_game = self.game_service.join_game(self.game_key,
+                                                  'player_o',
+                                                  self.update_url)
         player_o_key = UUID(joined_game['player_o']['key'])
 
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
@@ -153,20 +165,22 @@ class TestGameService(unittest.TestCase):
         assert updated_game.player_x_turn
 
     def test__mark_cell__should_raise_exception_when_third_player_marks(self):
-        self.game_service.join_game(self.game_key, 'player_o')
+        self.game_service.join_game(self.game_key, 'player_o', self.update_url)
 
         with pytest.raises(NotValidPlayerException):
             self.game_service.mark_cell(self.game_key, uuid4(), 0, 0)
 
     def test__mark_cell__should_raise_exception_if_not_o_players_turn_yet(self):
-        joined_game = self.game_service.join_game(self.game_key, 'player_o')
+        joined_game = self.game_service.join_game(self.game_key,
+                                                  'player_o',
+                                                  self.update_url)
         player_o_key = UUID(joined_game['player_o']['key'])
 
         with pytest.raises(NotYourTurnException):
             self.game_service.mark_cell(self.game_key, player_o_key, 0, 0)
 
     def test__mark_cell__should_raise_exception_if_not_x_players_turn_yet(self):
-        self.game_service.join_game(self.game_key, 'player_o')
+        self.game_service.join_game(self.game_key, 'player_o', self.update_url)
 
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
 

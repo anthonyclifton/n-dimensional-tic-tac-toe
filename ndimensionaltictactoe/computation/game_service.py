@@ -40,13 +40,13 @@ class GameService:
 
         return dumped_game
 
-    def join_game(self, key, player_name):
+    def join_game(self, key, player_name, update_url):
         game = self.get_game_by_key(key)
 
         if game.state == GAME_INPROGRESS:
             raise GameInprogressException
 
-        game.player_o = Player(uuid.uuid4(), player_name, 'no-update-url')
+        game.player_o = Player(uuid.uuid4(), player_name, update_url)
         game.state = GAME_INPROGRESS
 
         dumped_game, errors = PlayerOGameSchema().dump(game)
