@@ -1,3 +1,3 @@
 #!/bin/bash
-cd ndimensionaltictactoe
+# cd ndimensionaltictactoe
 python main.py

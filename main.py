@@ -3,14 +3,17 @@ from uuid import uuid4
 
 import requests
 
-from common import notify_error, log_api_call
+from ndimensionaltictactoe.common import notify_error, log_api_call
 from flask import Flask
 from flask import jsonify
 from flask import request
 
-from ndimensionaltictactoe import ndimensionaltictactoe_call, ndimensionaltictactoe_list
+from ndimensionaltictactoe.ndimensionaltictactoe import ndimensionaltictactoe_call, ndimensionaltictactoe_list
+from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema
+from ndimensionaltictactoe.computation.game_service import GameService
 
 app = Flask("ndimensionaltictactoe")
+game_service = GameService()
 
 HTTP_ERROR_CLIENT = 403
 HTTP_ERROR_SERVER = 500
@@ -49,18 +52,11 @@ def ndimensionaltictactoe_list_api():
         return notify_error(ex, HTTP_ERROR_SERVER)
 
 
-@app.route('/ping', methods=['POST'])
-def ping():
-    print("Received ping request, waiting 5 seconds and responding...")
-    sleep(5)
-
-    url = 'http://localhost:3333/pong'
-    payload = {
-        'myurl': 'my own url',
-        'token': uuid4()
-    }
-
-    requests.post(url, data=payload)
+@app.route('/create', methods=['POST'])
+def create():
+    create_game_json = request.get_json(silent=True)
+    create_game_request = CreateGameRequestSchema().load(create_game_json)
+    return "something"
 
 
 if __name__ == '__main__':
