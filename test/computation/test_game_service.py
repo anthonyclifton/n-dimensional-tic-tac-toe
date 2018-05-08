@@ -19,8 +19,10 @@ class TestGameService(unittest.TestCase):
         self.game_service = GameService()
 
     def test__create_game__should_return_a_dictionary(self):
-        game = self.game_service.create_game()
-        self.assertEqual(game['name'], 'no-name-game')
+        game_name = 'Test Game'
+        game = self.game_service.create_game(game_name)
+
+        self.assertEqual(game['name'], game_name)
         assert UUID(game['key'])
         self.assertEqual(game['size_x'], 3)
         self.assertEqual(game['size_y'], 3)
@@ -30,7 +32,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(game['winning_length'], 3)
 
     def test__create_game__should_add_a_default_game_object(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
 
         game = self.game_service.get_game_by_key(UUID(dumped_game['key']))
         assert isinstance(game, Game)
@@ -44,20 +46,15 @@ class TestGameService(unittest.TestCase):
         random_game_size_x = randint(0, 999)
         random_game_size_y = randint(0, 999)
         dumped_game = self.game_service.create_game(
+            'Test Game',
             grid_size_x=random_game_size_x,
             grid_size_y=random_game_size_y)
         game = self.game_service.get_game_by_key(UUID(dumped_game['key']))
         assert game.size_x == random_game_size_x
         assert game.size_y == random_game_size_y
 
-    def test__create_game_should_accept_a_user_supplied_game_name(self):
-        dumped_game = self.game_service.create_game(
-            name='user-defined-name'
-        )
-        assert dumped_game['name'] == 'user-defined-name'
-
     def test__join_game__should_add_player_o_to_game(self):
-        game = self.game_service.create_game()
+        game = self.game_service.create_game('Test Game')
         game_key = UUID(game['key'])
 
         dumped_game = self.game_service.join_game(game_key, 'test name')
@@ -69,7 +66,7 @@ class TestGameService(unittest.TestCase):
         assert updated_game.player_o.name == 'test name'
         assert updated_game.state == GAME_INPROGRESS
 
-        self.assertEqual(dumped_game['name'], 'no-name-game')
+        self.assertEqual(dumped_game['name'], 'Test Game')
         assert UUID(dumped_game['key'])
         self.assertEqual(dumped_game['size_x'], 3)
         self.assertEqual(dumped_game['size_y'], 3)
@@ -79,7 +76,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(dumped_game['winning_length'], 3)
 
     def test__join_game__should_raise_exception_when_game_already_in_progress(self):
-        game = self.game_service.create_game()
+        game = self.game_service.create_game('Test Game')
         game_key = UUID(game['key'])
         self.game_service.join_game(game_key, 'player who is on time')
 
@@ -87,7 +84,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.join_game(game_key, 'player who is too late')
 
     def test__delete_game__should_remove_game_from_service(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
 
         assert self.game_service.get_game_by_key(game_key)
@@ -98,7 +95,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.get_game_by_key(game_key)
 
     def test__mark_cell__should_add_the_mark_to_the_cell(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
         player_key = UUID(dumped_game['player_x']['key'])
 
@@ -114,7 +111,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(first_cell.value, X_MARK)
 
     def test__mark_cell_should_mark_x_when_player_x_is_marking_and_return_updated_game(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
         player_key = UUID(dumped_game['player_x']['key'])
 
@@ -127,7 +124,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(updated_game['cells'][0]['y'], 1)
 
     def test__mark_cell_should_mark_o_when_player_o_is_marking_and_return_updated_game(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
         player_x_key = UUID(dumped_game['player_x']['key'])
 
@@ -142,7 +139,7 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(updated_game['cells'][1]['y'], 1)
 
     def test__mark_cell__should_raise_exception_if_cell_already_marked(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
         player_x_key = UUID(dumped_game['player_x']['key'])
 
@@ -155,7 +152,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(game_key, player_o_key, 0, 0)
 
     def test__mark_cell__should_update_to_player_o_turn_when_player_x_marks(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
         player_x_key = UUID(dumped_game['player_x']['key'])
 
@@ -166,7 +163,7 @@ class TestGameService(unittest.TestCase):
         assert not updated_game.player_x_turn
 
     def test__mark_cell__should_update_to_player_x_turn_when_player_o_marks(self):
-        dumped_game = self.game_service.create_game()
+        dumped_game = self.game_service.create_game('Test Game')
         game_key = UUID(dumped_game['key'])
         player_x_key = UUID(dumped_game['player_x']['key'])
 
@@ -181,7 +178,7 @@ class TestGameService(unittest.TestCase):
         assert updated_game.player_x_turn
 
     def test__mark_cell__should_raise_exception_when_third_player_marks(self):
-        game = self.game_service.create_game()
+        game = self.game_service.create_game('Test Game')
         game_key = UUID(game['key'])
 
         self.game_service.join_game(game_key, 'player_o')
@@ -190,7 +187,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(game_key, uuid4(), 0, 0)
 
     def test__mark_cell__should_raise_exception_if_not_o_players_turn_yet(self):
-        game = self.game_service.create_game()
+        game = self.game_service.create_game('Test Game')
         game_key = UUID(game['key'])
 
         joined_game = self.game_service.join_game(game_key, 'player_o')
@@ -200,7 +197,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(game_key, player_o_key, 0, 0)
 
     def test__mark_cell__should_raise_exception_if_not_x_players_turn_yet(self):
-        game = self.game_service.create_game()
+        game = self.game_service.create_game('Test Game')
         game_key = UUID(game['key'])
         player_x_key = UUID(game['player_x']['key'])
 
@@ -212,7 +209,7 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(game_key, player_x_key, 1, 1)
 
     def test__mark_cell__should_raise_exception_if_game_not_yet_inprogress(self):
-        game = self.game_service.create_game()
+        game = self.game_service.create_game('Test Game')
         game_key = UUID(game['key'])
         player_x_key = UUID(game['player_x']['key'])
 
@@ -220,8 +217,8 @@ class TestGameService(unittest.TestCase):
             self.game_service.mark_cell(game_key, player_x_key, 1, 1)
 
     def test__get_games__should_return_all_created_games_summary(self):
-        self.game_service.create_game()
-        self.game_service.create_game()
+        self.game_service.create_game('Test Game')
+        self.game_service.create_game('Test Game 2')
 
         games_list = self.game_service.get_games()
         self.assertEqual(len(games_list), 2)

@@ -15,7 +15,7 @@ class GameService:
         self.games = {}
 
     def create_game(self,
-                    name='no-name-game',
+                    game_name,
                     grid_size_x=3,
                     grid_size_y=3,
                     dimensions=2):
@@ -24,7 +24,7 @@ class GameService:
         player_x = Player(uuid.uuid4(), 'player_x', 'no-update-url')
         player_o = None
 
-        new_game = Game(name,
+        new_game = Game(game_name,
                         game_key,
                         player_x,
                         player_o,
