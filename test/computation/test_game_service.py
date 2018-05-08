@@ -5,6 +5,7 @@ from uuid import UUID, uuid4
 import pytest
 
 from ndimensionaltictactoe.computation.game_service import GameService
+from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.exceptions.game_not_yet_inprogress_exception import GameNotYetInprogressException
 from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
@@ -113,7 +114,7 @@ class TestGameService(unittest.TestCase):
     def test__mark_cell_should_mark_x_when_player_x_is_marking_and_return_updated_game(self):
         self.game_service.join_game(self.game_key, "second player", self.update_url)
 
-        updated_game, errors = self.game_service.mark_cell(self.game_key,
+        updated_game = self.game_service.mark_cell(self.game_key,
                                                            self.player_x_key, 1, 1)
 
         self.assertEqual(updated_game['cells'][0]['value'], X_MARK)
@@ -127,7 +128,7 @@ class TestGameService(unittest.TestCase):
         player_o_key = UUID(joined_game['player_o']['key'])
 
         self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-        updated_game, errors = self.game_service.mark_cell(self.game_key, player_o_key, 1, 1)
+        updated_game = self.game_service.mark_cell(self.game_key, player_o_key, 1, 1)
 
         self.assertEqual(updated_game['cells'][1]['value'], O_MARK)
         self.assertEqual(updated_game['cells'][1]['x'], 1)
@@ -211,6 +212,11 @@ class TestGameService(unittest.TestCase):
         completed_game = self.game_service.mark_cell(self.game_key, self.player_x_key, 2, 0)
 
         self.assertEqual(completed_game['state'], GAME_COMPLETED)
+
+        with pytest.raises(GameAlreadyCompletedException):
+            self.game_service.mark_cell(self.game_key,
+                                        player_o_key,
+                                        0, 1)
 
     def test__mark_cell__should_raise_exception_when_mark_played_on_complete_game(self):
         pass

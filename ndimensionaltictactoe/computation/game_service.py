@@ -1,10 +1,11 @@
 import uuid
 
+from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.exceptions.game_not_yet_inprogress_exception import GameNotYetInprogressException
 from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
 from ndimensionaltictactoe.exceptions.not_your_turn_exception import NotYourTurnException
-from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
+from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS, GAME_COMPLETED, GAME_CREATED_WAITING
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
 from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema
@@ -65,8 +66,11 @@ class GameService:
     def mark_cell(self, game_key, player_key, x, y):
         game = self.get_game_by_key(game_key)
 
-        if game.state is not GAME_INPROGRESS:
+        if game.state is GAME_CREATED_WAITING:
             raise GameNotYetInprogressException
+
+        if game.state is GAME_COMPLETED:
+            raise GameAlreadyCompletedException
 
         if game.player_x.key == player_key:
             if not game.player_x_turn:
