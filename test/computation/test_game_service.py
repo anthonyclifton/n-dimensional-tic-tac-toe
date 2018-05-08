@@ -6,6 +6,7 @@ import pytest
 
 from ndimensionaltictactoe.computation.game_service import GameService
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
+from ndimensionaltictactoe.exceptions.game_not_yet_inprogress_exception import GameNotYetInprogressException
 from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
 from ndimensionaltictactoe.exceptions.not_your_turn_exception import NotYourTurnException
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
@@ -101,6 +102,8 @@ class TestGameService(unittest.TestCase):
         game_key = UUID(dumped_game['key'])
         player_key = UUID(dumped_game['player_x']['key'])
 
+        self.game_service.join_game(game_key, "second player")
+
         self.game_service.mark_cell(game_key, player_key, 0, 0)
 
         game = self.game_service.get_game_by_key(game_key)
@@ -115,6 +118,8 @@ class TestGameService(unittest.TestCase):
         game_key = UUID(dumped_game['key'])
         player_key = UUID(dumped_game['player_x']['key'])
 
+        self.game_service.join_game(game_key, "second player")
+
         updated_game, errors = self.game_service.mark_cell(game_key, player_key, 1, 1)
 
         self.assertEqual(updated_game['cells'][0]['value'], X_MARK)
@@ -125,11 +130,11 @@ class TestGameService(unittest.TestCase):
         dumped_game = self.game_service.create_game()
         game_key = UUID(dumped_game['key'])
         player_x_key = UUID(dumped_game['player_x']['key'])
-        self.game_service.mark_cell(game_key, player_x_key, 0, 0)
 
         joined_game = self.game_service.join_game(game_key, 'player_o')
         player_o_key = UUID(joined_game['player_o']['key'])
 
+        self.game_service.mark_cell(game_key, player_x_key, 0, 0)
         updated_game, errors = self.game_service.mark_cell(game_key, player_o_key, 1, 1)
 
         self.assertEqual(updated_game['cells'][1]['value'], O_MARK)
@@ -204,6 +209,14 @@ class TestGameService(unittest.TestCase):
         self.game_service.mark_cell(game_key, player_x_key, 0, 0)
 
         with pytest.raises(NotYourTurnException):
+            self.game_service.mark_cell(game_key, player_x_key, 1, 1)
+
+    def test__mark_cell__should_raise_exception_if_game_not_yet_inprogress(self):
+        game = self.game_service.create_game()
+        game_key = UUID(game['key'])
+        player_x_key = UUID(game['player_x']['key'])
+
+        with pytest.raises(GameNotYetInprogressException):
             self.game_service.mark_cell(game_key, player_x_key, 1, 1)
 
     def test__get_games__should_return_all_created_games_summary(self):

@@ -1,0 +1,2 @@
+class GameNotYetInprogressException(Exception):
+    pass
