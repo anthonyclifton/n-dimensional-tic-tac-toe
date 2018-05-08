@@ -14,8 +14,8 @@ from ndimensionaltictactoe.models.game import Game, GAME_CREATED_WAITING
 from ndimensionaltictactoe.models.mark import Mark
 from ndimensionaltictactoe.models.player import Player
 
-PLAYER_X = Player(uuid.uuid4(), 'player_x')
-PLAYER_O = Player(uuid.uuid4(), 'player_o')
+PLAYER_X = Player(uuid.uuid4(), 'player_x', 'http://localhost/update')
+PLAYER_O = Player(uuid.uuid4(), 'player_o', 'http://localhost/update')
 
 
 class TestGame(unittest.TestCase):

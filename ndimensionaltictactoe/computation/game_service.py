@@ -21,7 +21,7 @@ class GameService:
                     dimensions=2):
 
         game_key = uuid.uuid4()
-        player_x = Player(uuid.uuid4(), 'player_x')
+        player_x = Player(uuid.uuid4(), 'player_x', 'no-update-url')
         player_o = None
 
         new_game = Game(name,
@@ -44,7 +44,7 @@ class GameService:
         if game.state == GAME_INPROGRESS:
             raise GameInprogressException
 
-        game.player_o = Player(uuid.uuid4(), player_name)
+        game.player_o = Player(uuid.uuid4(), player_name, 'no-update-url')
         game.state = GAME_INPROGRESS
 
         dumped_game, errors = PlayerOGameSchema().dump(game)
