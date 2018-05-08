@@ -11,7 +11,7 @@ from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValid
 from ndimensionaltictactoe.exceptions.not_your_turn_exception import NotYourTurnException
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
-from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
+from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS, GAME_COMPLETED
 
 
 class TestGameService(unittest.TestCase):
@@ -199,3 +199,19 @@ class TestGameService(unittest.TestCase):
         games_list = self.game_service.get_games()
 
         self.assertEqual(len(games_list), 2)
+
+    def test__mark_cell__should_complete_game_when_theres_a_winning_move(self):
+        joined_game = self.game_service.join_game(self.game_key, 'player_o', self.update_url)
+        player_o_key = UUID(joined_game['player_o']['key'])
+
+        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
+        self.game_service.mark_cell(self.game_key, player_o_key, 0, 2)
+        self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 0)
+        self.game_service.mark_cell(self.game_key, player_o_key, 1, 2)
+        completed_game = self.game_service.mark_cell(self.game_key, self.player_x_key, 2, 0)
+
+        self.assertEqual(completed_game['state'], GAME_COMPLETED)
+
+    def test__mark_cell__should_raise_exception_when_mark_played_on_complete_game(self):
+        pass
+

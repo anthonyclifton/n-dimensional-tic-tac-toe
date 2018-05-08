@@ -52,7 +52,10 @@ class Game(object):
 
     def mark_cell_by_coordinates(self, x, y, mark):
         if not self.get_cell_by_coordinates(x, y):
-            self.cells.append(Mark(x, y, mark))
+            mark_obj = Mark(x, y, mark)
+            self.cells.append(mark_obj)
+            if self.mark_causes_win(mark_obj):
+                self.state = GAME_COMPLETED
         else:
             raise CellInUseException
 

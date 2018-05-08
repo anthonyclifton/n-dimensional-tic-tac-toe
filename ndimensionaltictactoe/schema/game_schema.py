@@ -25,6 +25,7 @@ class PlayerXGameSchema(Schema):
     player_x = fields.Nested(PlayerSchema)
     cells = fields.Nested(MarkSchema, many=True)
     winning_length = fields.Number()
+    state = fields.Integer()
 
 
 class PlayerOGameSchema(Schema):
@@ -35,6 +36,7 @@ class PlayerOGameSchema(Schema):
     player_o = fields.Nested(PlayerSchema)
     cells = fields.Nested(MarkSchema, many=True)
     winning_length = fields.Number()
+    state = fields.Integer()
 
 
 class GameSummarySchema(Schema):

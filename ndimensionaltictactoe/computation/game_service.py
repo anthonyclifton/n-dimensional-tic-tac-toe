@@ -73,12 +73,14 @@ class GameService:
                 raise NotYourTurnException
             game.mark_cell_by_coordinates(x, y, X_MARK)
             game.player_x_turn = False
-            return PlayerXGameSchema().dump(game)
+            dumped_game, errors = PlayerXGameSchema().dump(game)
+            return dumped_game
         elif game.player_o and (game.player_o.key == player_key):
             if game.player_x_turn:
                 raise NotYourTurnException
             game.mark_cell_by_coordinates(x, y, O_MARK)
             game.player_x_turn = True
-            return PlayerOGameSchema().dump(game)
+            dumped_game, errors = PlayerOGameSchema().dump(game)
+            return dumped_game
         else:
             raise NotValidPlayerException
