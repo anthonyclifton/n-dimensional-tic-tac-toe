@@ -1,2 +1,5 @@
 .idea
 .python-version
+*.pyc
+.pytest_cache
+lastfailed
