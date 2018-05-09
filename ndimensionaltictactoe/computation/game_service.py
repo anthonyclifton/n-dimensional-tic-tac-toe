@@ -53,8 +53,9 @@ class GameService:
         game.state = GAME_INPROGRESS
 
         dumped_game, errors = PlayerOGameSchema().dump(game)
+        updated_game, errors = PlayerXGameSchema().dump(game)
 
-        self.update_player(dumped_game, game.player_x.update_url)
+        self.update_player(updated_game, game.player_x.update_url)
 
         return dumped_game
 
@@ -83,7 +84,8 @@ class GameService:
             game.mark_cell_by_coordinates(x, y, X_MARK)
             game.player_x_turn = False
             dumped_game, errors = PlayerXGameSchema().dump(game)
-            self.update_player(dumped_game, game.player_o.update_url)
+            updated_game, errors = PlayerOGameSchema().dump(game)
+            self.update_player(updated_game, game.player_o.update_url)
             return dumped_game
         elif game.player_o and (game.player_o.key == player_key):
             if game.player_x_turn:
@@ -91,7 +93,8 @@ class GameService:
             game.mark_cell_by_coordinates(x, y, O_MARK)
             game.player_x_turn = True
             dumped_game, errors = PlayerOGameSchema().dump(game)
-            self.update_player(dumped_game, game.player_x.update_url)
+            updated_game, errors = PlayerXGameSchema().dump(game)
+            self.update_player(updated_game, game.player_x.update_url)
             return dumped_game
         else:
             raise NotValidPlayerException
