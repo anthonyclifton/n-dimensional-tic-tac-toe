@@ -4,4 +4,6 @@ pytest
 numpy
 marshmallow
 requests>=2.18.4
+gevent
+apscheduler
 

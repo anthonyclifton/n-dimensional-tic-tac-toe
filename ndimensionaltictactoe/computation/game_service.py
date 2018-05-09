@@ -1,6 +1,10 @@
+import atexit
+import logging
 import uuid
 
+import gevent
 import requests
+from apscheduler.schedulers.background import BackgroundScheduler
 
 from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
@@ -11,6 +15,17 @@ from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS, GAME_COMPLE
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 from ndimensionaltictactoe.models.player import Player
 from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema
+
+scheduler = BackgroundScheduler()
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
+
+logging.basicConfig()
+
+
+def _generic_post(url, payload):
+    print("in thread")
+    requests.post(url, json=payload)
 
 
 class GameService:
@@ -104,11 +119,16 @@ class GameService:
         else:
             raise NotValidPlayerException
 
-    def update_player(self, dumped_game, update_url):
-            payload = dumped_game
-            self._generic_post(update_url, payload)
-
     @staticmethod
-    def _generic_post(url, payload):
-        requests.post(url, json=payload)
+    def update_player(dumped_game, update_url):
+        print("Updating player")
+        payload = dumped_game
+        scheduler.add_job(
+            func=_generic_post,
+            args=(update_url, payload),
+            id='update',
+            name='Update a player',
+            replace_existing=True,
+            max_instances=100)
+
 
