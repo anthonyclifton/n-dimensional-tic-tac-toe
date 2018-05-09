@@ -1,5 +1,7 @@
 import uuid
 
+import requests
+
 from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.exceptions.game_not_yet_inprogress_exception import GameNotYetInprogressException
@@ -52,6 +54,8 @@ class GameService:
 
         dumped_game, errors = PlayerOGameSchema().dump(game)
 
+        self.update_player(dumped_game, game.player_x.update_url)
+
         return dumped_game
 
     def get_game_by_key(self, key):
@@ -79,6 +83,7 @@ class GameService:
             game.mark_cell_by_coordinates(x, y, X_MARK)
             game.player_x_turn = False
             dumped_game, errors = PlayerXGameSchema().dump(game)
+            self.update_player(dumped_game, game.player_o.update_url)
             return dumped_game
         elif game.player_o and (game.player_o.key == player_key):
             if game.player_x_turn:
@@ -86,6 +91,16 @@ class GameService:
             game.mark_cell_by_coordinates(x, y, O_MARK)
             game.player_x_turn = True
             dumped_game, errors = PlayerOGameSchema().dump(game)
+            self.update_player(dumped_game, game.player_x.update_url)
             return dumped_game
         else:
             raise NotValidPlayerException
+
+    def update_player(self, dumped_game, update_url):
+            payload = dumped_game
+            self._generic_post(update_url, payload)
+
+    @staticmethod
+    def _generic_post(url, payload):
+        return requests.post(url, json=payload)
+

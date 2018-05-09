@@ -218,6 +218,6 @@ class TestGameService(unittest.TestCase):
                                         player_o_key,
                                         0, 1)
 
-    def test__mark_cell__should_raise_exception_when_mark_played_on_complete_game(self):
+    def test__update_player__sends_updated_game_to_specified_player(self):
         pass
 
