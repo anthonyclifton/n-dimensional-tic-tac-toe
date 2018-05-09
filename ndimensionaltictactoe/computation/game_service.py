@@ -70,6 +70,7 @@ class GameService:
         del self.games[key]
 
     def mark_cell(self, game_key, player_key, x, y):
+        print("Player {} marked cell {}, {}".format(player_key, x, y))
         game = self.get_game_by_key(game_key)
 
         if game.state is GAME_CREATED_WAITING:
@@ -81,7 +82,9 @@ class GameService:
         if game.player_x.key == player_key:
             if not game.player_x_turn:
                 raise NotYourTurnException
-            game.mark_cell_by_coordinates(x, y, X_MARK)
+            winner = game.mark_cell_by_coordinates(x, y, X_MARK)
+            if winner:
+                print("Player X Wins!")
             game.player_x_turn = False
             dumped_game, errors = PlayerXGameSchema().dump(game)
             updated_game, errors = PlayerOGameSchema().dump(game)
@@ -90,7 +93,9 @@ class GameService:
         elif game.player_o and (game.player_o.key == player_key):
             if game.player_x_turn:
                 raise NotYourTurnException
-            game.mark_cell_by_coordinates(x, y, O_MARK)
+            winner = game.mark_cell_by_coordinates(x, y, O_MARK)
+            if winner:
+                print("Player O Wins!")
             game.player_x_turn = True
             dumped_game, errors = PlayerOGameSchema().dump(game)
             updated_game, errors = PlayerXGameSchema().dump(game)
@@ -105,5 +110,5 @@ class GameService:
 
     @staticmethod
     def _generic_post(url, payload):
-        return requests.post(url, json=payload)
+        requests.post(url, json=payload)
 

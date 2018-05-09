@@ -16,5 +16,5 @@ class JoinGameRequestSchema(Schema):
 class MarkCellRequestSchema(Schema):
     game_key = fields.UUID()
     player_key = fields.UUID()
-    x = fields.Number()
-    y = fields.Number()
+    x = fields.Integer()
+    y = fields.Integer()

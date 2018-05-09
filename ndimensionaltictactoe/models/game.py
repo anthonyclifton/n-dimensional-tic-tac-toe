@@ -56,6 +56,8 @@ class Game(object):
             self.cells.append(mark_obj)
             if self.mark_causes_win(mark_obj):
                 self.state = GAME_COMPLETED
+                return True
+            return False
         else:
             raise CellInUseException
 

@@ -1,11 +1,10 @@
 from marshmallow import Schema, fields
-from marshmallow.fields import Field
 
 
 class MarkSchema(Schema):
-    x = fields.Number()
-    y = fields.Number()
-    value = fields.Number()
+    x = fields.Integer()
+    y = fields.Integer()
+    value = fields.Integer()
 
 
 class PlayerSchema(Schema):
@@ -20,30 +19,30 @@ class PlayerSummarySchema(Schema):
 class PlayerXGameSchema(Schema):
     name = fields.String()
     key = fields.UUID()
-    size_x = fields.Number()
-    size_y = fields.Number()
+    size_x = fields.Integer()
+    size_y = fields.Integer()
     player_x = fields.Nested(PlayerSchema)
     cells = fields.Nested(MarkSchema, many=True)
-    winning_length = fields.Number()
+    winning_length = fields.Integer()
     state = fields.Integer()
 
 
 class PlayerOGameSchema(Schema):
     name = fields.String()
     key = fields.UUID()
-    size_x = fields.Number()
-    size_y = fields.Number()
+    size_x = fields.Integer()
+    size_y = fields.Integer()
     player_o = fields.Nested(PlayerSchema)
     cells = fields.Nested(MarkSchema, many=True)
-    winning_length = fields.Number()
+    winning_length = fields.Integer()
     state = fields.Integer()
 
 
 class GameSummarySchema(Schema):
     name = fields.String()
     key = fields.UUID()
-    size_x = fields.Number()
-    size_y = fields.Number()
-    winning_length = fields.Number()
+    size_x = fields.Integer()
+    size_y = fields.Integer()
+    winning_length = fields.Integer()
     player_x = fields.Nested(PlayerSummarySchema)
     player_o = fields.Nested(PlayerSummarySchema)
