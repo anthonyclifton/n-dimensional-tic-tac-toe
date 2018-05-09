@@ -58,7 +58,8 @@ class GameService:
         return self.games[key]
 
     def get_games(self):
-        return GameSummarySchema().dump(self.games.values(), many=True)
+        games, errors = GameSummarySchema().dump(self.games.values(), many=True)
+        return games
 
     def delete_game(self, key):
         del self.games[key]

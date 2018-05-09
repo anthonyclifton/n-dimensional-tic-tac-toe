@@ -81,8 +81,11 @@ def create():
 def join():
     join_game_json = request.get_json(silent=True)
     join_game_request, errors = JoinGameRequestSchema().load(join_game_json)
-    game = game_service.join_game(join_game_request['game_key'],
-                                  join_game_request['player_name'])
+
+    game_key = join_game_request['game_key']
+    player_name = join_game_request['player_name']
+    update_url = join_game_request['update_url']
+    game = game_service.join_game(game_key, player_name, update_url)
 
     response = Response(
         response=json.dumps(game),
