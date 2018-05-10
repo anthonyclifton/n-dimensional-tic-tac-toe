@@ -3,3 +3,4 @@ class Player(object):
         self.key = key
         self.name = name
         self.update_url = update_url
+        self.winner = False

@@ -10,6 +10,7 @@ class MarkSchema(Schema):
 class PlayerSchema(Schema):
     key = fields.UUID()
     name = fields.String()
+    winner = fields.Boolean()
 
 
 class PlayerSummarySchema(Schema):
@@ -25,6 +26,7 @@ class PlayerXGameSchema(Schema):
     cells = fields.Nested(MarkSchema, many=True)
     winning_length = fields.Integer()
     state = fields.Integer()
+    winner = fields.Boolean()
 
 
 class PlayerOGameSchema(Schema):
@@ -36,6 +38,7 @@ class PlayerOGameSchema(Schema):
     cells = fields.Nested(MarkSchema, many=True)
     winning_length = fields.Integer()
     state = fields.Integer()
+    winner = fields.Boolean()
 
 
 class GameSummarySchema(Schema):

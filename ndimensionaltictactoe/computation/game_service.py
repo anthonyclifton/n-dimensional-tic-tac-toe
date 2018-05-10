@@ -2,7 +2,6 @@ import atexit
 import logging
 import uuid
 
-import gevent
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -99,7 +98,8 @@ class GameService:
                 raise NotYourTurnException
             winner = game.mark_cell_by_coordinates(x, y, X_MARK)
             if winner:
-                print("Player X Wins!")
+                game.player_x.winner = True
+                game.player_o.winner = False
             game.player_x_turn = False
             dumped_game, errors = PlayerXGameSchema().dump(game)
             updated_game, errors = PlayerOGameSchema().dump(game)
@@ -110,7 +110,8 @@ class GameService:
                 raise NotYourTurnException
             winner = game.mark_cell_by_coordinates(x, y, O_MARK)
             if winner:
-                print("Player O Wins!")
+                game.player_x.winner = False
+                game.player_o.winner = True
             game.player_x_turn = True
             dumped_game, errors = PlayerOGameSchema().dump(game)
             updated_game, errors = PlayerXGameSchema().dump(game)

@@ -6,4 +6,5 @@ marshmallow
 requests>=2.18.4
 gevent
 apscheduler
+mock>=2.0.0
 

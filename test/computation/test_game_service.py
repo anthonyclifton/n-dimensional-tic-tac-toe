@@ -3,6 +3,7 @@ from random import randint
 from uuid import UUID, uuid4
 
 import pytest
+from mock import patch
 
 from ndimensionaltictactoe.computation.game_service import GameService
 from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
@@ -201,7 +202,9 @@ class TestGameService(unittest.TestCase):
 
         self.assertEqual(len(games_list), 2)
 
-    def test__mark_cell__should_complete_game_when_theres_a_winning_move(self):
+    @patch('ndimensionaltictactoe.computation.game_service._generic_post', autospec=True)
+    def test__mark_cell__should_complete_game_when_theres_a_horizontal_winning_move(self,
+                                                                         mock_bg_sched):
         joined_game = self.game_service.join_game(self.game_key, 'player_o', self.update_url)
         player_o_key = UUID(joined_game['player_o']['key'])
 
@@ -213,10 +216,30 @@ class TestGameService(unittest.TestCase):
 
         self.assertEqual(completed_game['state'], GAME_COMPLETED)
 
+        self.assertEqual(completed_game['player_x']['winner'], True)
+
         with pytest.raises(GameAlreadyCompletedException):
             self.game_service.mark_cell(self.game_key,
                                         player_o_key,
                                         0, 1)
+
+    @patch('ndimensionaltictactoe.computation.game_service._generic_post', autospec=True)
+    def test__mark_cell__should_complete_game_when_theres_a_vertical_winning_move(self,
+                                                                         mock_bg_sched):
+        joined_game = self.game_service.join_game(self.game_key, 'player_o', self.update_url)
+        player_o_key = UUID(joined_game['player_o']['key'])
+
+        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
+        self.game_service.mark_cell(self.game_key, player_o_key, 0, 2)
+        self.game_service.mark_cell(self.game_key, self.player_x_key, 2, 0)
+        self.game_service.mark_cell(self.game_key, player_o_key, 1, 2)
+        self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 1)
+        completed_game = self.game_service.mark_cell(self.game_key,
+                                                     player_o_key,
+                                                     2, 2)
+        self.assertEqual(completed_game['state'], GAME_COMPLETED)
+
+        self.assertEqual(completed_game['player_o']['winner'], True)
 
     def test__update_player__sends_updated_game_to_specified_player(self):
         pass
