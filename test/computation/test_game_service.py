@@ -1,18 +1,11 @@
 import unittest
 from random import randint
-from uuid import UUID, uuid4
+from uuid import UUID
 
 import pytest
-from mock import patch
 
 from ndimensionaltictactoe.computation.game_service import GameService
-from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
-from ndimensionaltictactoe.exceptions.game_not_yet_inprogress_exception import GameNotYetInprogressException
-from ndimensionaltictactoe.exceptions.not_valid_player_exception import NotValidPlayerException
-from ndimensionaltictactoe.exceptions.not_your_turn_exception import NotYourTurnException
-from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
-from ndimensionaltictactoe.exceptions.cell_in_use_exception import CellInUseException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS, GAME_COMPLETED
 
 
@@ -100,99 +93,6 @@ class TestGameService(unittest.TestCase):
         with pytest.raises(KeyError):
             self.game_service.get_game_by_key(self.game_key)
 
-    def test__mark_cell__should_add_the_mark_to_the_cell(self):
-        self.game_service.join_game(self.game_key, "second player", self.update_url)
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-
-        game = self.game_service.get_game_by_key(self.game_key)
-
-        first_cell = game.cells[0]
-        self.assertEqual(first_cell.x, 0)
-        self.assertEqual(first_cell.y, 0)
-        self.assertEqual(first_cell.value, X_MARK)
-
-    def test__mark_cell_should_mark_x_when_player_x_is_marking_and_return_updated_game(self):
-        self.game_service.join_game(self.game_key, "second player", self.update_url)
-
-        updated_game = self.game_service.mark_cell(self.game_key,
-                                                           self.player_x_key, 1, 1)
-
-        self.assertEqual(updated_game['cells'][0]['value'], X_MARK)
-        self.assertEqual(updated_game['cells'][0]['x'], 1)
-        self.assertEqual(updated_game['cells'][0]['y'], 1)
-
-    def test__mark_cell_should_mark_o_when_player_o_is_marking_and_return_updated_game(self):
-        joined_game = self.game_service.join_game(self.game_key,
-                                                  'player_o',
-                                                  self.update_url)
-        player_o_key = UUID(joined_game['player_o']['key'])
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-        updated_game = self.game_service.mark_cell(self.game_key, player_o_key, 1, 1)
-
-        self.assertEqual(updated_game['cells'][1]['value'], O_MARK)
-        self.assertEqual(updated_game['cells'][1]['x'], 1)
-        self.assertEqual(updated_game['cells'][1]['y'], 1)
-
-    def test__mark_cell__should_raise_exception_if_cell_already_marked(self):
-        joined_game = self.game_service.join_game(self.game_key,
-                                                  'player_o',
-                                                  self.update_url)
-        player_o_key = UUID(joined_game['player_o']['key'])
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-
-        with pytest.raises(CellInUseException):
-            self.game_service.mark_cell(self.game_key, player_o_key, 0, 0)
-
-    def test__mark_cell__should_update_to_player_o_turn_when_player_x_marks(self):
-        self.game_service.join_game(self.game_key, 'player_o', self.update_url)
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-        updated_game = self.game_service.get_game_by_key(self.game_key)
-
-        assert not updated_game.player_x_turn
-
-    def test__mark_cell__should_update_to_player_x_turn_when_player_o_marks(self):
-        joined_game = self.game_service.join_game(self.game_key,
-                                                  'player_o',
-                                                  self.update_url)
-        player_o_key = UUID(joined_game['player_o']['key'])
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-        self.game_service.mark_cell(self.game_key, player_o_key, 0, 1)
-
-        updated_game = self.game_service.get_game_by_key(self.game_key)
-
-        assert updated_game.player_x_turn
-
-    def test__mark_cell__should_raise_exception_when_third_player_marks(self):
-        self.game_service.join_game(self.game_key, 'player_o', self.update_url)
-
-        with pytest.raises(NotValidPlayerException):
-            self.game_service.mark_cell(self.game_key, uuid4(), 0, 0)
-
-    def test__mark_cell__should_raise_exception_if_not_o_players_turn_yet(self):
-        joined_game = self.game_service.join_game(self.game_key,
-                                                  'player_o',
-                                                  self.update_url)
-        player_o_key = UUID(joined_game['player_o']['key'])
-
-        with pytest.raises(NotYourTurnException):
-            self.game_service.mark_cell(self.game_key, player_o_key, 0, 0)
-
-    def test__mark_cell__should_raise_exception_if_not_x_players_turn_yet(self):
-        self.game_service.join_game(self.game_key, 'player_o', self.update_url)
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-
-        with pytest.raises(NotYourTurnException):
-            self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 1)
-
-    def test__mark_cell__should_raise_exception_if_game_not_yet_inprogress(self):
-        with pytest.raises(GameNotYetInprogressException):
-            self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 1)
-
     def test__get_games__should_return_all_created_games_summary(self):
         self.game_service.create_game('Test Game 2',
                                       self.player_x_name,
@@ -201,46 +101,3 @@ class TestGameService(unittest.TestCase):
         games_list = self.game_service.get_games()
 
         self.assertEqual(len(games_list), 2)
-
-    @patch('ndimensionaltictactoe.computation.game_service._generic_post', autospec=True)
-    def test__mark_cell__should_complete_game_when_theres_a_horizontal_winning_move(self,
-                                                                         mock_bg_sched):
-        joined_game = self.game_service.join_game(self.game_key, 'player_o', self.update_url)
-        player_o_key = UUID(joined_game['player_o']['key'])
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-        self.game_service.mark_cell(self.game_key, player_o_key, 0, 2)
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 0)
-        self.game_service.mark_cell(self.game_key, player_o_key, 1, 2)
-        completed_game = self.game_service.mark_cell(self.game_key, self.player_x_key, 2, 0)
-
-        self.assertEqual(completed_game['state'], GAME_COMPLETED)
-
-        self.assertEqual(completed_game['player_x']['winner'], True)
-
-        with pytest.raises(GameAlreadyCompletedException):
-            self.game_service.mark_cell(self.game_key,
-                                        player_o_key,
-                                        0, 1)
-
-    @patch('ndimensionaltictactoe.computation.game_service._generic_post', autospec=True)
-    def test__mark_cell__should_complete_game_when_theres_a_vertical_winning_move(self,
-                                                                         mock_bg_sched):
-        joined_game = self.game_service.join_game(self.game_key, 'player_o', self.update_url)
-        player_o_key = UUID(joined_game['player_o']['key'])
-
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 0, 0)
-        self.game_service.mark_cell(self.game_key, player_o_key, 0, 2)
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 2, 0)
-        self.game_service.mark_cell(self.game_key, player_o_key, 1, 2)
-        self.game_service.mark_cell(self.game_key, self.player_x_key, 1, 1)
-        completed_game = self.game_service.mark_cell(self.game_key,
-                                                     player_o_key,
-                                                     2, 2)
-        self.assertEqual(completed_game['state'], GAME_COMPLETED)
-
-        self.assertEqual(completed_game['player_o']['winner'], True)
-
-    def test__update_player__sends_updated_game_to_specified_player(self):
-        pass
-

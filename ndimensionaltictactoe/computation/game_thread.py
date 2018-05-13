@@ -47,9 +47,10 @@ def game_thread(game):
         game.player_o.winner = False
         game.state = GAME_COMPLETED
 
-    # send game complete update to both clients
-    # clients should respond with nonsense moves if the game is done,
-    # doesn't matter what they return for a next move as it'll be ignored
+    _game_completed(game)
+
+
+def _game_completed(game):
     print("Player X won" if game.player_x.winner else "Player O won")
     _generic_post(game.player_x.update_url, game)
     _generic_post(game.player_o.update_url, game)
