@@ -37,6 +37,7 @@ class Game(object):
         self.key = key
         self.size_x = size_x
         self.size_y = size_y
+        self.max_moves = size_x * size_y
         self.dimensions = dimensions
         self.player_x = player_x
         self.player_o = player_o

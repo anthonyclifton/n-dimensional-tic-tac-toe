@@ -5,6 +5,7 @@ import uuid
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
+from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.exceptions.game_already_completed_exception import GameAlreadyCompletedException
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.exceptions.game_not_yet_inprogress_exception import GameNotYetInprogressException
@@ -131,5 +132,17 @@ class GameService:
             name='Update a player',
             replace_existing=True,
             max_instances=100)
+
+    @staticmethod
+    def _start_game(game):
+        print("Starting game: {}".format(game.name))
+        scheduler.add_job(
+            func=game_thread,
+            args=game,
+            id='game',
+            name='Running game',
+            replace_existing=True,
+            max_instances=100)
+
 
 

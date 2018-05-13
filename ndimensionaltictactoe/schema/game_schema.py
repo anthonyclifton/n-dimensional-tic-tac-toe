@@ -1,6 +1,11 @@
 from marshmallow import Schema, fields
 
 
+class MoveSchema(Schema):
+    x = fields.Integer()
+    y = fields.Integer()
+
+
 class MarkSchema(Schema):
     x = fields.Integer()
     y = fields.Integer()
