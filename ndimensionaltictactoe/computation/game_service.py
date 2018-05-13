@@ -68,9 +68,10 @@ class GameService:
         game.state = GAME_INPROGRESS
 
         dumped_game, errors = PlayerOGameSchema().dump(game)
-        updated_game, errors = PlayerXGameSchema().dump(game)
+        # updated_game, errors = PlayerXGameSchema().dump(game)
 
-        self.update_player(updated_game, game.player_x.update_url)
+        # self.update_player(updated_game, game.player_x.update_url)
+        self._start_game(game)
 
         return dumped_game
 
@@ -138,7 +139,7 @@ class GameService:
         print("Starting game: {}".format(game.name))
         scheduler.add_job(
             func=game_thread,
-            args=game,
+            args=[game],
             id='game',
             name='Running game',
             replace_existing=True,
