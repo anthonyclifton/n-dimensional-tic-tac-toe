@@ -2,7 +2,6 @@ import atexit
 import logging
 import uuid
 
-import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 
 from ndimensionaltictactoe.computation.game_thread import game_thread
