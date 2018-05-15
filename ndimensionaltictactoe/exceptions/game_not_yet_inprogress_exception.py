@@ -1,2 +1,0 @@
-class GameNotYetInprogressException(Exception):
-    pass
