@@ -42,7 +42,6 @@ def game_thread(game):
             game.player_x_turn = True
 
     if game.state == GAME_INPROGRESS:
-        print("Nobody won")
         game.player_x.winner = False
         game.player_o.winner = False
         game.state = GAME_COMPLETED
@@ -51,6 +50,11 @@ def game_thread(game):
 
 
 def _game_completed(game):
-    print("Player X won" if game.player_x.winner else "Player O won")
+    if game.player_x.winner:
+        print("Player X won")
+    elif game.player_o.winner:
+        print("Player O won")
+    else:
+        print("It was a draw")
     _generic_post(game.player_x.update_url, game)
     _generic_post(game.player_o.update_url, game)
