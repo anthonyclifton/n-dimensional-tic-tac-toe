@@ -14,13 +14,14 @@ class Tournament(object):
         self.lobby = lobby
 
         self.rounds = []
+        self.games_in_progress = []
 
     def play_round(self, scheduler, round):
         self.rounds.append(round)
 
         pairings = itertools.combinations(self.lobby.values(), 2)
 
-        scheduler.add_listener(self.process_completed_game, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+        scheduler.add_listener(self._process_completed_game, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
         for pairing in pairings:
             player_1 = pairing[0]
@@ -34,11 +35,12 @@ class Tournament(object):
                             size_y=round.y_size)
 
             round.games.append(new_game)
-            round.games_in_progress.append(new_game.key)
+            self.games_in_progress.append(new_game.key)
             self._start_game(scheduler, new_game)
 
-    def process_completed_game(self, event):
-        pass
+    def _process_completed_game(self, event):
+        game_key = event.retval.key
+        self.games_in_progress.remove(game_key)
 
     def _start_game(self, scheduler, game):
         print("Starting game: {}".format(game.name))
