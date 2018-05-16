@@ -1,6 +1,8 @@
 import itertools
 from uuid import uuid4
 
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
+
 from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.models.game import Game
 
@@ -18,6 +20,8 @@ class Tournament(object):
 
         pairings = itertools.combinations(self.lobby.values(), 2)
 
+        scheduler.add_listener(self.process_completed_game, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
+
         for pairing in pairings:
             player_1 = pairing[0]
             player_2 = pairing[1]
@@ -33,8 +37,10 @@ class Tournament(object):
 
             self._start_game(scheduler, new_game)
 
-    @staticmethod
-    def _start_game(scheduler, game):
+    def process_completed_game(self, event):
+        pass
+
+    def _start_game(self, scheduler, game):
         print("Starting game: {}".format(game.name))
         scheduler.add_job(
             func=game_thread,

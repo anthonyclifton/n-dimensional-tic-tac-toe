@@ -22,6 +22,7 @@ class TestTournament(unittest.TestCase):
         mock_scheduler = MagicMock(autospec=True)
         tournament.play_round(mock_scheduler, round)
 
+        self.assertEqual(1, mock_scheduler.add_listener.call_count)
         self.assertEqual(1, mock_scheduler.add_job.call_count)
         self.assertEqual(1, len(tournament.rounds[0].games))
 
@@ -40,5 +41,6 @@ class TestTournament(unittest.TestCase):
         mock_scheduler = MagicMock(autospec=True)
         tournament.play_round(mock_scheduler, round)
 
+        self.assertEqual(1, mock_scheduler.add_listener.call_count)
         self.assertEqual(3, mock_scheduler.add_job.call_count)
         self.assertEqual(3, len(tournament.rounds[0].games))

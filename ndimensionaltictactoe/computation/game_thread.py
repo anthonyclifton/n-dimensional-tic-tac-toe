@@ -47,6 +47,7 @@ def game_thread(game):
         game.state = GAME_COMPLETED
 
     _game_completed(game)
+    return game
 
 
 def _game_completed(game):
