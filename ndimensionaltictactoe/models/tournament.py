@@ -34,7 +34,7 @@ class Tournament(object):
                             size_y=round.y_size)
 
             round.games.append(new_game)
-
+            round.games_in_progress.append(new_game.key)
             self._start_game(scheduler, new_game)
 
     def process_completed_game(self, event):
