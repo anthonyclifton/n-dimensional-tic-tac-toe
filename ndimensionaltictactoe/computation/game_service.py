@@ -8,6 +8,7 @@ from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.player import Player
+from ndimensionaltictactoe.models.round import Round
 from ndimensionaltictactoe.models.tournament import Tournament
 from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema, \
     PlayerSchema, LobbySchema, TournamentSchema
@@ -32,7 +33,6 @@ class GameService:
                     grid_size_x=3,
                     grid_size_y=3,
                     dimensions=2):
-
         game_key = uuid.uuid4()
         player_x = Player(uuid.uuid4(), player_name, update_url)
         player_o = None
@@ -84,6 +84,15 @@ class GameService:
         dumped_tournaments, errors = TournamentSchema().dump(new_tournament)
         return dumped_tournaments
 
+    def play_round(self, tournament_key,
+                   winner_points,
+                   x_size,
+                   y_size,
+                   winning_length):
+        new_round = Round(winner_points, x_size, y_size, winning_length)
+
+        self.tournaments[tournament_key].play_round(new_round)
+
     def get_game_by_key(self, key):
         return self.games[key]
 
@@ -104,6 +113,3 @@ class GameService:
             name='Running game',
             replace_existing=True,
             max_instances=100)
-
-
-

@@ -5,3 +5,6 @@ class Tournament(object):
         self.lobby = lobby
 
         self.rounds = []
+
+    def play_round(self, round):
+        self.rounds.append(round)

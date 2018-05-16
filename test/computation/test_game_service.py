@@ -121,3 +121,18 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(1, len(self.game_service.tournaments))
         assert UUID(tournament['key'])
         self.assertEqual(0, len(tournament['rounds']))
+
+    def test__play_round__should_add_a_new_round_to_the_specified_tournament(self):
+        tournament = self.game_service.create_tournament('Fun tournament')
+
+        winner_points = 1
+        x_size = 4
+        y_size = 4
+        winning_length = 3
+        self.game_service.play_round(UUID(tournament['key']),
+                                     winner_points,
+                                     x_size,
+                                     y_size,
+                                     winning_length)
+
+        self.assertEqual(1, len(self.game_service.tournaments[UUID(tournament['key'])].rounds))
