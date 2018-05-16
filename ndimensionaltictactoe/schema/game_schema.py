@@ -18,6 +18,10 @@ class PlayerSchema(Schema):
     winner = fields.Boolean()
 
 
+class LobbySchema(Schema):
+    lobby = fields.Nested(PlayerSchema, many=True)
+
+
 class PlayerSummarySchema(Schema):
     name = fields.String()
 

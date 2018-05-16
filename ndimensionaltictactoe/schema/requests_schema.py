@@ -18,3 +18,9 @@ class MarkCellRequestSchema(Schema):
     player_key = fields.UUID()
     x = fields.Integer()
     y = fields.Integer()
+
+
+class LobbyRequestSchema(Schema):
+    player_name = fields.String()
+    update_url = fields.String()
+

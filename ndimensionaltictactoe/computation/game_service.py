@@ -8,7 +8,8 @@ from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.player import Player
-from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema
+from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema, \
+    PlayerSchema, LobbySchema
 
 scheduler = BackgroundScheduler()
 scheduler.start()
@@ -20,6 +21,7 @@ logging.basicConfig()
 class GameService:
     def __init__(self):
         self.games = {}
+        self.lobby = {}
 
     def create_game(self,
                     game_name,
@@ -59,6 +61,17 @@ class GameService:
         dumped_game, errors = PlayerOGameSchema().dump(game)
         self._start_game(game)
         return dumped_game
+
+    def enter_lobby(self, player_name, update_url):
+        player = Player(uuid.uuid4(), player_name, update_url)
+        self.lobby[player.key] = player
+        dumped_player, errors = PlayerSchema().dump(player)
+        return dumped_player
+
+
+    def get_lobby(self):
+        dumped_players, errors = LobbySchema().dump({'lobby': self.lobby.values()})
+        return dumped_players
 
     def get_game_by_key(self, key):
         return self.games[key]

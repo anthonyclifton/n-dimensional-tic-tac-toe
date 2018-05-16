@@ -3,7 +3,9 @@ import json
 from flask import Flask, Response
 from flask import request
 
-from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema
+from ndimensionaltictactoe.schema.game_schema import PlayerSchema
+from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema, \
+    LobbyRequestSchema
 from ndimensionaltictactoe.computation.game_service import GameService
 
 app = Flask("ndimensionaltictactoe")
@@ -51,6 +53,32 @@ def join():
         status=200,
         mimetype='application/json'
     )
+
+    return response
+
+
+@app.route('/lobby', methods=['GET', 'POST'])
+def lobby():
+    if request.method == 'POST':
+        lobby_json = request.get_json(silent=True)
+        lobby_request, errors = LobbyRequestSchema().load(lobby_json)
+
+        player_name = lobby_request['player_name']
+        update_url = lobby_request['update_url']
+        player = game_service.enter_lobby(player_name, update_url)
+
+        response = Response(
+            response=json.dumps(player),
+            status=200,
+            mimetype='application/json'
+        )
+    else:
+        players = game_service.get_lobby()
+        response = Response(
+            response=json.dumps(players),
+            status=200,
+            mimetype='application/json'
+        )
 
     return response
 
