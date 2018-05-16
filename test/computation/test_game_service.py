@@ -103,6 +103,14 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(len(games_list), 2)
 
     def test__enter_lobby__should_add_the_player_to_the_lobby_map(self):
-        player = self.game_service.enter_lobby('Test Player', self.update_url)
+        player = self.game_service.enter_lobby(self.player_x_name, self.update_url)
 
-        self.assertEqual(self.game_service.lobby[UUID(player['key'])].name, 'Test Player')
+        self.assertEqual(self.game_service.lobby[UUID(player['key'])].name, self.player_x_name)
+
+    def test__get_lobby__should_return_all_players_in_the_lobby(self):
+        self.game_service.enter_lobby(self.player_x_name, self.update_url)
+        self.game_service.enter_lobby('another player', self.update_url)
+
+        players = self.game_service.get_lobby()
+
+        self.assertEqual(2, len(players['lobby']))
