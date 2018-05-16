@@ -29,6 +29,8 @@ class Tournament(object):
                             size_x=round.x_size,
                             size_y=round.y_size)
 
+            round.games.append(new_game)
+
             self._start_game(scheduler, new_game)
 
     @staticmethod

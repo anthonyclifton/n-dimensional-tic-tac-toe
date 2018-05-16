@@ -5,5 +5,5 @@ class Round(object):
         self.y_size = y_size
         self.winning_length = winning_length
 
-        self.games = {}
+        self.games = []
         self.winners = []

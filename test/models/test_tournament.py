@@ -23,6 +23,7 @@ class TestTournament(unittest.TestCase):
         tournament.play_round(mock_scheduler, round)
 
         self.assertEqual(1, mock_scheduler.add_job.call_count)
+        self.assertEqual(1, len(tournament.rounds[0].games))
 
     def test__play_round_calls_game_thread_thrice_when_three_players_in_lobby(self):
         player_1 = Player(uuid4(), "player 1", "update_url1")
@@ -40,3 +41,4 @@ class TestTournament(unittest.TestCase):
         tournament.play_round(mock_scheduler, round)
 
         self.assertEqual(3, mock_scheduler.add_job.call_count)
+        self.assertEqual(3, len(tournament.rounds[0].games))
