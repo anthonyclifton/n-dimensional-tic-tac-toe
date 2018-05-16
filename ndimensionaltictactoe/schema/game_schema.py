@@ -58,3 +58,17 @@ class GameSummarySchema(Schema):
     winning_length = fields.Integer()
     player_x = fields.Nested(PlayerSummarySchema)
     player_o = fields.Nested(PlayerSummarySchema)
+
+
+class RoundSchema(Schema):
+    winner_points = fields.Integer()
+    x_size = fields.Integer()
+    y_size = fields.Integer()
+    winning_length = fields.Integer()
+    winners = fields.Nested(fields.UUID, many=True)
+
+
+class TournamentSchema(Schema):
+    name = fields.String()
+    key = fields.UUID()
+    rounds = fields.Nested(RoundSchema, many=True)
