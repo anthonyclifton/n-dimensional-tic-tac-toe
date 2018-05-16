@@ -24,7 +24,7 @@ class TestTournament(unittest.TestCase):
 
         tournament = Tournament(uuid4(), "Test Tournament", lobby)
 
-        round = Round(1, 3, 3, 3)
+        round = Round(3, 3, 3)
 
         mock_scheduler = MagicMock(autospec=True)
         tournament.play_round(mock_scheduler, round)
@@ -44,7 +44,7 @@ class TestTournament(unittest.TestCase):
 
         tournament = Tournament(uuid4(), "Test Tournament", lobby)
 
-        round = Round(1, 3, 3, 3)
+        round = Round(3, 3, 3)
 
         mock_scheduler = MagicMock(autospec=True)
         tournament.play_round(mock_scheduler, round)
@@ -67,3 +67,10 @@ class TestTournament(unittest.TestCase):
         tournament._process_completed_game(event)
 
         self.assertEqual(0, len(tournament.games_in_progress))
+
+    def test__process_completed_game__calculates_points_for_all_players(self):
+        # points are in increments of 2 so they can be split
+        # a win gets you all the points
+        # a loss gets you no points
+        # a draw splits the points between the two players
+        pass

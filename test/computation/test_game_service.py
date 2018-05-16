@@ -129,7 +129,6 @@ class TestGameService(unittest.TestCase):
         self.game_service.enter_lobby(self.player_x_name, self.update_url)
         self.game_service.enter_lobby('another player', self.update_url)
 
-        winner_points = 1
         x_size = 4
         y_size = 4
         winning_length = 3
@@ -138,7 +137,6 @@ class TestGameService(unittest.TestCase):
 
         self.game_service.play_round(mock_scheduler,
                                      UUID(tournament['key']),
-                                     winner_points,
                                      x_size,
                                      y_size,
                                      winning_length)
