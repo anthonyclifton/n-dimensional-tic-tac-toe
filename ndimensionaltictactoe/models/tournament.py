@@ -1,3 +1,4 @@
+import itertools
 from uuid import uuid4
 
 from ndimensionaltictactoe.computation.game_thread import game_thread
@@ -15,17 +16,20 @@ class Tournament(object):
     def play_round(self, scheduler, round):
         self.rounds.append(round)
 
-        player_1 = self.lobby.values()[0]
-        player_2 = self.lobby.values()[1]
+        pairings = itertools.combinations(self.lobby.values(), 2)
 
-        new_game = Game("{} vs {}".format(player_1.name, player_2.name),
-                        uuid4(),
-                        player_1,
-                        player_2,
-                        size_x=round.x_size,
-                        size_y=round.y_size)
+        for pairing in pairings:
+            player_1 = pairing[0]
+            player_2 = pairing[1]
 
-        self._start_game(scheduler, new_game)
+            new_game = Game("{} vs {}".format(player_1.name, player_2.name),
+                            uuid4(),
+                            player_1,
+                            player_2,
+                            size_x=round.x_size,
+                            size_y=round.y_size)
+
+            self._start_game(scheduler, new_game)
 
     @staticmethod
     def _start_game(scheduler, game):

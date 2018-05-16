@@ -24,4 +24,19 @@ class TestTournament(unittest.TestCase):
 
         self.assertEqual(1, mock_scheduler.add_job.call_count)
 
+    def test__play_round_calls_game_thread_thrice_when_three_players_in_lobby(self):
+        player_1 = Player(uuid4(), "player 1", "update_url1")
+        player_2 = Player(uuid4(), "player 2", "update_url2")
+        player_3 = Player(uuid4(), "player 3", "update_url3")
+        lobby = {player_1.key: player_1,
+                 player_2.key: player_2,
+                 player_3.key: player_3}
 
+        tournament = Tournament(uuid4(), "Test Tournament", lobby)
+
+        round = Round(1, 3, 3, 3)
+
+        mock_scheduler = MagicMock(autospec=True)
+        tournament.play_round(mock_scheduler, round)
+
+        self.assertEqual(3, mock_scheduler.add_job.call_count)
