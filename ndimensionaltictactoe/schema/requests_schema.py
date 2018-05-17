@@ -27,3 +27,10 @@ class LobbyRequestSchema(Schema):
 
 class TournamentRequestSchema(Schema):
     tournament_name = fields.String()
+
+
+class RoundRequestSchema(Schema):
+    tournament_key = fields.UUID()
+    x_size = fields.Integer()
+    y_size = fields.Integer()
+    winning_length = fields.Integer()

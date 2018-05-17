@@ -1,10 +1,13 @@
+import atexit
 import json
+import logging
 
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask, Response
 from flask import request
 
 from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema, \
-    LobbyRequestSchema, TournamentRequestSchema
+    LobbyRequestSchema, TournamentRequestSchema, RoundRequestSchema
 from ndimensionaltictactoe.computation.game_service import GameService
 
 app = Flask("ndimensionaltictactoe")
@@ -12,6 +15,12 @@ game_service = GameService()
 
 HTTP_ERROR_CLIENT = 403
 HTTP_ERROR_SERVER = 500
+
+scheduler = BackgroundScheduler()
+scheduler.start()
+atexit.register(lambda: scheduler.shutdown())
+
+logging.basicConfig()
 
 
 @app.route('/create', methods=['POST'])
@@ -103,6 +112,31 @@ def handle_tournament():
             status=200,
             mimetype='application/json'
         )
+
+    return response
+
+
+@app.route('/round', methods=['POST'])
+def handle_round():
+    round_json = request.get_json(silent=True)
+    round_request, errors = RoundRequestSchema().load(round_json)
+
+    tournament_key = round_request['tournament_key']
+    x_size = round_request['x_size']
+    y_size = round_request['y_size']
+    winning_length = round_request['winning_length']
+
+    round = game_service.play_round(scheduler,
+                                    tournament_key,
+                                    x_size,
+                                    y_size,
+                                    winning_length)
+
+    response = Response(
+        response=json.dumps(round),
+        status=200,
+        mimetype='application/json'
+    )
 
     return response
 
