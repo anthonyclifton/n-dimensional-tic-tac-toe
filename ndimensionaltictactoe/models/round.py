@@ -6,4 +6,4 @@ class Round(object):
         self.winning_length = winning_length
 
         self.games = []
-        self.winners = []
+        self.scoreboard = None

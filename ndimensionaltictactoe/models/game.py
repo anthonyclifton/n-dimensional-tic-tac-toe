@@ -174,3 +174,6 @@ class Game(object):
                 break
 
         return diagonal_length + 1 >= self.winning_length
+
+    def is_a_draw(self):
+        return not self.player_x.winner and not self.player_o.winner

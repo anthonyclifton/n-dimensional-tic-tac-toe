@@ -15,9 +15,11 @@ class Tournament(object):
 
         self.rounds = []
         self.games_in_progress = []
+        self.current_round = None
 
     def play_round(self, scheduler, round):
         self.rounds.append(round)
+        self.current_round = round
 
         pairings = itertools.combinations(self.lobby.values(), 2)
 
@@ -41,6 +43,30 @@ class Tournament(object):
     def _process_completed_game(self, event):
         game_key = event.retval.key
         self.games_in_progress.remove(game_key)
+
+        if not self.games_in_progress:
+            self._score_games_in_round()
+
+    def _score_games_in_round(self):
+        scoreboard = {}
+        for game in self.current_round.games:
+            if game.is_a_draw():
+                self._assign_points(scoreboard, game.player_x, self.current_round.winner_points/2)
+                self._assign_points(scoreboard, game.player_o, self.current_round.winner_points/2)
+            elif game.player_x.winner:
+                self._assign_points(scoreboard, game.player_x, self.current_round.winner_points)
+                self._assign_points(scoreboard, game.player_o, 0)
+            else:
+                self._assign_points(scoreboard, game.player_x, 0)
+                self._assign_points(scoreboard, game.player_o, self.current_round.winner_points)
+        self.current_round.scoreboard = scoreboard
+
+    def _assign_points(self, scoreboard, player, points):
+        if scoreboard.has_key(player.key):
+            previous_score = scoreboard[player.key]
+            scoreboard[player.key] = previous_score + points
+        else:
+            scoreboard[player.key] = points
 
     def _start_game(self, scheduler, game):
         print("Starting game: {}".format(game.name))
