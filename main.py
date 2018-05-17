@@ -3,7 +3,6 @@ import json
 from flask import Flask, Response
 from flask import request
 
-from ndimensionaltictactoe.schema.game_schema import PlayerSchema
 from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema, \
     LobbyRequestSchema
 from ndimensionaltictactoe.computation.game_service import GameService

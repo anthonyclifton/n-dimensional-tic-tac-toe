@@ -1,6 +1,7 @@
 import atexit
 import logging
 import uuid
+from copy import deepcopy
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -77,15 +78,12 @@ class GameService:
     def create_tournament(self, tournament_name):
         new_tournament = Tournament(uuid.uuid4(),
                                     tournament_name,
-                                    self.lobby)
-
-        # TODO: deepcopy the lobby when starting the tournament so new players
-        # in lobby don't end up messing up the scoreboard
+                                    deepcopy(self.lobby))
 
         self.tournaments[new_tournament.key] = new_tournament
 
-        dumped_tournaments, errors = TournamentSchema().dump(new_tournament)
-        return dumped_tournaments
+        dumped_tournament, errors = TournamentSchema().dump(new_tournament)
+        return dumped_tournament
 
     def play_round(self, scheduler,
                    tournament_key,

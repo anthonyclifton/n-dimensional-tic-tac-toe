@@ -123,6 +123,9 @@ class TestGameService(unittest.TestCase):
         assert UUID(tournament['key'])
         self.assertEqual(0, len(tournament['rounds']))
 
+        tournament_object = self.game_service.tournaments[UUID(tournament['key'])]
+        assert tournament_object.lobby is not self.game_service.lobby
+
     def test__play_round__should_add_a_new_round_to_the_specified_tournament(self):
         tournament = self.game_service.create_tournament('Fun tournament')
 
