@@ -2,15 +2,12 @@ import requests
 
 from ndimensionaltictactoe.models.game import GAME_INPROGRESS, GAME_COMPLETED
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
-from ndimensionaltictactoe.schema.game_schema import MoveSchema, PlayerXGameSchema, PlayerOGameSchema
+from ndimensionaltictactoe.schema.game_schema import MoveSchema, GameSchema
 
 
 def _generic_post(url, game):
     print("Updating client")
-    if url == game.player_x.update_url:
-        dumped_game, errors = PlayerXGameSchema().dump(game)
-    else:
-        dumped_game, errors = PlayerOGameSchema().dump(game)
+    dumped_game, errors = GameSchema().dump(game)
 
     print("Sending: {}".format(str(dumped_game)))
 

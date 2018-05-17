@@ -26,6 +26,19 @@ class PlayerSummarySchema(Schema):
     name = fields.String()
 
 
+class GameSchema(Schema):
+    name = fields.String()
+    key = fields.UUID()
+    size_x = fields.Integer()
+    size_y = fields.Integer()
+    player_x = fields.Nested(PlayerSchema)
+    player_o = fields.Nested(PlayerSchema)
+    cells = fields.Nested(MarkSchema, many=True)
+    winning_length = fields.Integer()
+    state = fields.Integer()
+    winner = fields.Boolean()
+
+
 class PlayerXGameSchema(Schema):
     name = fields.String()
     key = fields.UUID()
