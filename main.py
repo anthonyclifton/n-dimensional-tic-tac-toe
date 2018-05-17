@@ -126,14 +126,14 @@ def handle_round():
     y_size = round_request['y_size']
     winning_length = round_request['winning_length']
 
-    round = game_service.play_round(scheduler,
-                                    tournament_key,
-                                    x_size,
-                                    y_size,
-                                    winning_length)
+    game_service.play_round(scheduler,
+                            tournament_key,
+                            x_size,
+                            y_size,
+                            winning_length)
 
     response = Response(
-        response=json.dumps(round),
+        response=json.dumps({'round': 'in_progress'}),
         status=200,
         mimetype='application/json'
     )

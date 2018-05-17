@@ -5,7 +5,7 @@ from uuid import uuid4
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
 from ndimensionaltictactoe.computation.game_thread import game_thread
-from ndimensionaltictactoe.models.game import Game
+from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 
 
 class Tournament(object):
@@ -40,6 +40,7 @@ class Tournament(object):
                             deepcopy(player_2),
                             size_x=round.x_size,
                             size_y=round.y_size)
+            new_game.state = GAME_INPROGRESS
 
             round.games.append(new_game)
             self.games_in_progress.append(new_game.key)
