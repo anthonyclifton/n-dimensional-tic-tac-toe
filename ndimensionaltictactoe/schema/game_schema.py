@@ -39,30 +39,6 @@ class GameSchema(Schema):
     winner = fields.Boolean()
 
 
-class PlayerXGameSchema(Schema):
-    name = fields.String()
-    key = fields.UUID()
-    size_x = fields.Integer()
-    size_y = fields.Integer()
-    player_x = fields.Nested(PlayerSchema)
-    cells = fields.Nested(MarkSchema, many=True)
-    winning_length = fields.Integer()
-    state = fields.Integer()
-    winner = fields.Boolean()
-
-
-class PlayerOGameSchema(Schema):
-    name = fields.String()
-    key = fields.UUID()
-    size_x = fields.Integer()
-    size_y = fields.Integer()
-    player_o = fields.Nested(PlayerSchema)
-    cells = fields.Nested(MarkSchema, many=True)
-    winning_length = fields.Integer()
-    state = fields.Integer()
-    winner = fields.Boolean()
-
-
 class GameSummarySchema(Schema):
     name = fields.String()
     key = fields.UUID()

@@ -1,9 +1,5 @@
-import atexit
-import logging
 import uuid
 from copy import deepcopy
-
-from apscheduler.schedulers.background import BackgroundScheduler
 
 from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
@@ -11,8 +7,8 @@ from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.player import Player
 from ndimensionaltictactoe.models.round import Round
 from ndimensionaltictactoe.models.tournament import Tournament
-from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema, \
-    PlayerSchema, LobbySchema, TournamentSchema
+from ndimensionaltictactoe.schema.game_schema import GameSummarySchema, \
+    PlayerSchema, LobbySchema, TournamentSchema, GameSchema
 
 
 class GameService:
@@ -42,7 +38,7 @@ class GameService:
 
         self.games[game_key] = new_game
 
-        dumped_game, errors = PlayerXGameSchema().dump(new_game)
+        dumped_game, errors = GameSchema().dump(new_game)
 
         return dumped_game
 
@@ -59,7 +55,7 @@ class GameService:
         game.player_o = Player(uuid.uuid4(), player_name, update_url)
         game.state = GAME_INPROGRESS
 
-        dumped_game, errors = PlayerOGameSchema().dump(game)
+        dumped_game, errors = GameSchema().dump(game)
         self._start_game(scheduler, game)
         return dumped_game
 
