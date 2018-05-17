@@ -30,6 +30,10 @@ class Tournament(object):
             player_1 = pairing[0]
             player_2 = pairing[1]
 
+            # TODO: since X always has the advantage, would it be better
+            # to generate two games for each pairing?  To give them an
+            # equal chance at the advantage?
+
             new_game = Game("{} vs {}".format(player_1.name, player_2.name),
                             uuid4(),
                             deepcopy(player_1),
@@ -40,6 +44,19 @@ class Tournament(object):
             round.games.append(new_game)
             self.games_in_progress.append(new_game.key)
             self._start_game(scheduler, new_game)
+
+    def get_scoreboard(self):
+        scoreboards = [round.scoreboard for round in self.rounds]
+        tournament_scoreboard = {}
+
+        for scoreboard in scoreboards:
+            for score in scoreboard:
+                if score in tournament_scoreboard:
+                    previous_score = tournament_scoreboard[score]
+                    tournament_scoreboard[score] = previous_score + scoreboard[score]
+                else:
+                    tournament_scoreboard[score] = scoreboard[score]
+        return tournament_scoreboard
 
     def _process_completed_game(self, event):
         game_key = event.retval.key

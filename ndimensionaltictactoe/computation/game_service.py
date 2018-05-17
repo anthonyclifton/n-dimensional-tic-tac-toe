@@ -79,6 +79,9 @@ class GameService:
                                     tournament_name,
                                     self.lobby)
 
+        # TODO: deepcopy the lobby when starting the tournament so new players
+        # in lobby don't end up messing up the scoreboard
+
         self.tournaments[new_tournament.key] = new_tournament
 
         dumped_tournaments, errors = TournamentSchema().dump(new_tournament)
