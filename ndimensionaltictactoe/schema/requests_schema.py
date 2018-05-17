@@ -24,3 +24,6 @@ class LobbyRequestSchema(Schema):
     player_name = fields.String()
     update_url = fields.String()
 
+
+class TournamentRequestSchema(Schema):
+    tournament_name = fields.String()

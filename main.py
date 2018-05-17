@@ -4,7 +4,7 @@ from flask import Flask, Response
 from flask import request
 
 from ndimensionaltictactoe.schema.requests_schema import CreateGameRequestSchema, JoinGameRequestSchema, \
-    LobbyRequestSchema
+    LobbyRequestSchema, TournamentRequestSchema
 from ndimensionaltictactoe.computation.game_service import GameService
 
 app = Flask("ndimensionaltictactoe")
@@ -15,7 +15,7 @@ HTTP_ERROR_SERVER = 500
 
 
 @app.route('/create', methods=['POST'])
-def create():
+def handle_create_game():
     create_game_json = request.get_json(silent=True)
     create_game_request, errors = CreateGameRequestSchema().load(create_game_json)
 
@@ -38,7 +38,7 @@ def create():
 
 
 @app.route('/join', methods=['POST'])
-def join():
+def handle_join_game():
     join_game_json = request.get_json(silent=True)
     join_game_request, errors = JoinGameRequestSchema().load(join_game_json)
 
@@ -57,7 +57,7 @@ def join():
 
 
 @app.route('/lobby', methods=['GET', 'POST'])
-def lobby():
+def handle_lobby():
     if request.method == 'POST':
         lobby_json = request.get_json(silent=True)
         lobby_request, errors = LobbyRequestSchema().load(lobby_json)
@@ -75,6 +75,31 @@ def lobby():
         players = game_service.get_lobby()
         response = Response(
             response=json.dumps(players),
+            status=200,
+            mimetype='application/json'
+        )
+
+    return response
+
+
+@app.route('/tournament', methods=['GET', 'POST'])
+def handle_tournament():
+    if request.method == 'POST':
+        tournament_json = request.get_json(silent=True)
+        tournament_request, errors = TournamentRequestSchema().load(tournament_json)
+
+        tournament_name = tournament_request['tournament_name']
+        tournament = game_service.create_tournament(tournament_name)
+
+        response = Response(
+            response=json.dumps(tournament),
+            status=200,
+            mimetype='application/json'
+        )
+    else:
+        tournaments = game_service.get_tournaments()
+        response = Response(
+            response=json.dumps(tournaments),
             status=200,
             mimetype='application/json'
         )

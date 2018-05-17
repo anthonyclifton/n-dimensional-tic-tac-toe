@@ -85,6 +85,10 @@ class GameService:
         dumped_tournament, errors = TournamentSchema().dump(new_tournament)
         return dumped_tournament
 
+    def get_tournaments(self):
+        dumped_tournaments, errors = TournamentSchema().dump(self.tournaments.values(), many=True)
+        return dumped_tournaments
+
     def play_round(self, scheduler,
                    tournament_key,
                    x_size,
