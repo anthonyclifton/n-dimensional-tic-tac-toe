@@ -14,12 +14,6 @@ from ndimensionaltictactoe.models.tournament import Tournament
 from ndimensionaltictactoe.schema.game_schema import PlayerXGameSchema, GameSummarySchema, PlayerOGameSchema, \
     PlayerSchema, LobbySchema, TournamentSchema
 
-scheduler = BackgroundScheduler()
-scheduler.start()
-atexit.register(lambda: scheduler.shutdown())
-
-logging.basicConfig()
-
 
 class GameService:
     def __init__(self):
@@ -52,7 +46,11 @@ class GameService:
 
         return dumped_game
 
-    def join_game(self, key, player_name, update_url):
+    def join_game(self,
+                  scheduler,
+                  key,
+                  player_name,
+                  update_url):
         game = self.get_game_by_key(key)
 
         if game.state == GAME_INPROGRESS:
@@ -62,7 +60,7 @@ class GameService:
         game.state = GAME_INPROGRESS
 
         dumped_game, errors = PlayerOGameSchema().dump(game)
-        self._start_game(game)
+        self._start_game(scheduler, game)
         return dumped_game
 
     def enter_lobby(self, player_name, update_url):
@@ -110,7 +108,7 @@ class GameService:
         del self.games[key]
 
     @staticmethod
-    def _start_game(game):
+    def _start_game(scheduler, game):
         print("Starting game: {}".format(game.name))
         scheduler.add_job(
             func=game_thread,

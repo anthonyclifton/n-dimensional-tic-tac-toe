@@ -56,7 +56,9 @@ class TestGameService(unittest.TestCase):
         assert game.size_y == random_game_size_y
 
     def test__join_game__should_add_player_o_to_game(self):
-        joined_game = self.game_service.join_game(self.game_key,
+        mock_scheduler = MagicMock(autospec=True)
+        joined_game = self.game_service.join_game(mock_scheduler,
+                                                  self.game_key,
                                                   'Test Player O',
                                                   self.update_url)
 
@@ -77,12 +79,15 @@ class TestGameService(unittest.TestCase):
         self.assertEqual(joined_game['winning_length'], 3)
 
     def test__join_game__should_raise_exception_when_game_already_in_progress(self):
-        self.game_service.join_game(self.game_key,
+        mock_scheduler = MagicMock(autospec=True)
+        self.game_service.join_game(mock_scheduler,
+                                    self.game_key,
                                     'player who is on time',
                                     self.update_url)
 
         with pytest.raises(GameInprogressException):
-            self.game_service.join_game(self.game_key,
+            self.game_service.join_game(mock_scheduler,
+                                        self.game_key,
                                         'player who is too late',
                                         self.update_url)
 
