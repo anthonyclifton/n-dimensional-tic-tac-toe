@@ -1,4 +1,5 @@
 import itertools
+from copy import deepcopy
 from uuid import uuid4
 
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
@@ -31,8 +32,8 @@ class Tournament(object):
 
             new_game = Game("{} vs {}".format(player_1.name, player_2.name),
                             uuid4(),
-                            player_1,
-                            player_2,
+                            deepcopy(player_1),
+                            deepcopy(player_2),
                             size_x=round.x_size,
                             size_y=round.y_size)
 
@@ -48,6 +49,10 @@ class Tournament(object):
             self._score_games_in_round()
 
     def _score_games_in_round(self):
+        # points are in increments of 2 so they can be split
+        # a win gets you all the points
+        # a loss gets you no points
+        # a draw splits the points between the two players
         scoreboard = {}
         for game in self.current_round.games:
             if game.is_a_draw():
@@ -62,7 +67,7 @@ class Tournament(object):
         self.current_round.scoreboard = scoreboard
 
     def _assign_points(self, scoreboard, player, points):
-        if scoreboard.has_key(player.key):
+        if player.key in scoreboard:
             previous_score = scoreboard[player.key]
             scoreboard[player.key] = previous_score + points
         else:

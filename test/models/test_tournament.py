@@ -1,4 +1,5 @@
 import unittest
+from copy import deepcopy
 from uuid import uuid4
 
 from apscheduler.events import JobExecutionEvent
@@ -16,11 +17,13 @@ class TestTournament(unittest.TestCase):
         self.player_2 = Player(uuid4(), "player 2", "update_url2")
         self.player_3 = Player(uuid4(), "player 3", "update_url3")
 
+        self.game_1 = Game("Test Game 1", uuid4(), deepcopy(self.player_1), deepcopy(self.player_2))
+        self.game_2 = Game("Test Game 2", uuid4(), deepcopy(self.player_1), deepcopy(self.player_3))
+        self.game_3 = Game("Test Game 3", uuid4(), deepcopy(self.player_2), deepcopy(self.player_3))
+
     def test__play_round__calls_game_thread_once_when_two_players_in_lobby(self):
-        player_1 = Player(uuid4(), "player 1", "update_url1")
-        player_2 = Player(uuid4(), "player 2", "update_url2")
-        lobby = {player_1.key: player_1,
-                 player_2.key: player_2}
+        lobby = {self.player_1.key: self.player_1,
+                 self.player_2.key: self.player_2}
 
         tournament = Tournament(uuid4(), "Test Tournament", lobby)
 
@@ -35,12 +38,9 @@ class TestTournament(unittest.TestCase):
         self.assertEqual(1, len(tournament.games_in_progress))
 
     def test__play_round__calls_game_thread_thrice_when_three_players_in_lobby(self):
-        player_1 = Player(uuid4(), "player 1", "update_url1")
-        player_2 = Player(uuid4(), "player 2", "update_url2")
-        player_3 = Player(uuid4(), "player 3", "update_url3")
-        lobby = {player_1.key: player_1,
-                 player_2.key: player_2,
-                 player_3.key: player_3}
+        lobby = {self.player_1.key: self.player_1,
+                 self.player_2.key: self.player_2,
+                 self.player_3.key: self.player_3}
 
         tournament = Tournament(uuid4(), "Test Tournament", lobby)
 
@@ -71,28 +71,45 @@ class TestTournament(unittest.TestCase):
         self.assertEqual(1, len(tournament.games_in_progress))
 
     def test__process_completed_game__calculates_points_for_two_players(self):
-        # points are in increments of 2 so they can be split
-        # a win gets you all the points
-        # a loss gets you no points
-        # a draw splits the points between the two players
-        player_1 = Player(uuid4(), "player 1", "update_url1")
-        player_2 = Player(uuid4(), "player 2", "update_url2")
-        lobby = {player_1.key: player_1,
-                 player_2.key: player_2}
-
-        tournament = Tournament(uuid4(), "Test Tournament", lobby)
-
         round = Round(3, 3, 3)
+        round.games = [self.game_1]
+        tournament = Tournament(uuid4(), "Test Tournament", [])
+        tournament.rounds.append(round)
+        tournament.current_round = round
+        tournament.games_in_progress = [self.game_1.key]
 
-        mock_scheduler = MagicMock(autospec=True)
-        tournament.play_round(mock_scheduler, round)
+        self.game_1.player_x.winner = True
+        self.game_1.player_o.winner = False
 
-        for game in tournament.rounds[0].games:
-            game.player_x.winner = True
-            game.player_o.winner = False
-            event = JobExecutionEvent(1234, 4567, 'jobstore', 'whenever', retval=game)
-            tournament._process_completed_game(event)
+        event = JobExecutionEvent(1234, 4567, 'jobstore', 'whenever', retval=self.game_1)
+        tournament._process_completed_game(event)
 
         self.assertEqual(0, len(tournament.games_in_progress))
-        self.assertEqual(2, tournament.rounds[0].scoreboard[player_1.key])
-        self.assertEqual(0, tournament.rounds[0].scoreboard[player_2.key])
+        self.assertEqual(2, tournament.rounds[0].scoreboard[self.player_1.key])
+        self.assertEqual(0, tournament.rounds[0].scoreboard[self.player_2.key])
+
+    def test__process_completed_game__calculates_points_for_three_players(self):
+        round = Round(10, 10, 3)
+
+        self.game_1.player_x.winner = False
+        self.game_1.player_o.winner = False
+
+        self.game_2.player_x.winner = True
+        self.game_2.player_o.winner = False
+
+        self.game_3.player_x.winner = False
+        self.game_3.player_o.winner = True
+
+        round.games = [self.game_1, self.game_2, self.game_3]
+        tournament = Tournament(uuid4(), "Test Tournament", [])
+        tournament.rounds.append(round)
+        tournament.current_round = round
+        tournament.games_in_progress = [self.game_1.key]
+
+        event = JobExecutionEvent(1234, 4567, 'jobstore', 'whenever', retval=self.game_1)
+
+        tournament._process_completed_game(event)
+
+        self.assertEqual(9, tournament.rounds[0].scoreboard[self.player_1.key])
+        self.assertEqual(3, tournament.rounds[0].scoreboard[self.player_2.key])
+        self.assertEqual(6, tournament.rounds[0].scoreboard[self.player_3.key])
