@@ -6,6 +6,7 @@ from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
 from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
+from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
 
 
 class Tournament(object):
@@ -64,7 +65,27 @@ class Tournament(object):
         self.games_in_progress.remove(game_key)
 
         if not self.games_in_progress:
+            for game in self.current_round.games:
+                self._render_game_outcome(game)
             self._score_games_in_round()
+
+    def _render_game_outcome(self, game):
+        game_name = game.name[:30]
+        title_bar_length = 80 - (len(game_name) + 23)
+        player_x_moves = len([move for move in game.cells if move.value == X_MARK])
+        player_o_moves = len([move for move in game.cells if move.value == O_MARK])
+
+        print ""
+        print "----[ Game Complete: {} ]{}".format(game_name, "-" * title_bar_length)
+        print "{} (Player X) made {} moves".format(game.player_x.name[:30], player_x_moves)
+        print "{} (Player O) made {} moves\n".format(game.player_o.name[:30], player_o_moves)
+        if game.player_x.winner:
+            print("Winner: Player X")
+        elif game.player_o.winner:
+            print("Winner: Player O")
+        else:
+            print("Game was Drawn")
+        print "{}".format("-" * 80)
 
     def _score_games_in_round(self):
         # points are in increments of 2 so they can be split

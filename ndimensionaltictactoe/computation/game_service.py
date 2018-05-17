@@ -105,7 +105,6 @@ class GameService:
 
     @staticmethod
     def _start_game(scheduler, game):
-        print("Starting game: {}".format(game.name))
         scheduler.add_job(
             func=game_thread,
             args=[game],
