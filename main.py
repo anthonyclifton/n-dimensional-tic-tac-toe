@@ -34,8 +34,16 @@ def handle_create_game():
     game_name = create_game_request.get('game_name', 'Unnamed Game')
     player_name = create_game_request.get('player_name', "Unnamed Player")
     update_url = create_game_request['update_url']
+    size_x = create_game_request['size_x']
+    size_y = create_game_request['size_y']
+    winning_length = create_game_request['winning_length']
 
-    game = game_service.create_game(game_name, player_name, update_url)
+    game = game_service.create_game(game_name,
+                                    player_name,
+                                    update_url,
+                                    size_x,
+                                    size_y,
+                                    winning_length)
 
     response = Response(
         response=json.dumps(game),

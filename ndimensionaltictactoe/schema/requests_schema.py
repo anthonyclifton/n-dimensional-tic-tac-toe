@@ -5,6 +5,9 @@ class CreateGameRequestSchema(Schema):
     game_name = fields.String()
     player_name = fields.String()
     update_url = fields.String()
+    size_x = fields.Integer()
+    size_y = fields.Integer()
+    winning_length = fields.Integer()
 
 
 class JoinGameRequestSchema(Schema):

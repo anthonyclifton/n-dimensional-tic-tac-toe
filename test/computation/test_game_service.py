@@ -50,7 +50,8 @@ class TestGameService(unittest.TestCase):
             self.player_x_name,
             self.update_url,
             grid_size_x=random_game_size_x,
-            grid_size_y=random_game_size_y)
+            grid_size_y=random_game_size_y,
+            winning_length=min([random_game_size_x, random_game_size_y]))
         game = self.game_service.get_game_by_key(UUID(custom_sized_game['key']))
         assert game.size_x == random_game_size_x
         assert game.size_y == random_game_size_y

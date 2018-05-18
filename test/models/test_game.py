@@ -21,19 +21,19 @@ PLAYER_O = Player(uuid.uuid4(), 'player_o', 'http://localhost/update')
 class TestGame(unittest.TestCase):
     def test__init__should_raise_exception_when_dimensions_less_than_two(self):
         with pytest.raises(GridTooSmallException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 1)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 3, 1)
 
     def test__init__should_raise_exception_when_dimensions_greater_than_two(self):
         with pytest.raises(GridTooLargeException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 3)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 3, 3)
 
     def test__init__should_raise_exception_when_winning_length_too_short(self):
         with pytest.raises(WinningLengthTooShortException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 2, 0)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 3, 0, 2)
 
     def test__init__should_raise_exception_when_winning_length_greater_than_shortest_side(self):
         with pytest.raises(WinningLengthTooLongException):
-            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 4, 2, 4)
+            Game('test-grid', uuid.uuid4(), PLAYER_X, PLAYER_O, 3, 4, 4, 2)
 
     def test__init__should_raise_exception_when_name_is_empty(self):
         with pytest.raises(NoNameException):

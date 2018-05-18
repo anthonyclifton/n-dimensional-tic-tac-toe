@@ -20,8 +20,8 @@ class Game(object):
                  player_o,
                  size_x=3,
                  size_y=3,
-                 dimensions=2,
-                 winning_length=3):
+                 winning_length=3,
+                 dimensions=2):
         if not name:
             raise NoNameException
         if dimensions < 2:

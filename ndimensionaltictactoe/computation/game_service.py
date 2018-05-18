@@ -26,7 +26,9 @@ class GameService:
                     update_url,
                     grid_size_x=3,
                     grid_size_y=3,
-                    dimensions=2):
+                    winning_length=3):
+        print ""
+        print "Player {} has created game {}".format(player_name, game_name)
         game_key = uuid.uuid4()
         player_x = Player(uuid.uuid4(), player_name, update_url)
         player_o = None
@@ -37,7 +39,7 @@ class GameService:
                         player_o,
                         size_x=grid_size_x,
                         size_y=grid_size_y,
-                        dimensions=dimensions)
+                        winning_length=winning_length)
 
         self.games[game_key] = new_game
 
@@ -51,6 +53,8 @@ class GameService:
                   player_name,
                   update_url):
         game = self.get_game_by_key(key)
+        print ""
+        print "Player {} has joined game {}".format(player_name, game.name)
 
         if game.state == GAME_INPROGRESS:
             raise GameInprogressException
@@ -65,6 +69,8 @@ class GameService:
         return dumped_game
 
     def enter_lobby(self, player_name, update_url):
+        print ""
+        print "Player {} has entered the Lobby".format(player_name)
         player = Player(uuid.uuid4(), player_name, update_url)
         self.lobby[player.key] = player
         dumped_player, errors = PlayerSchema().dump(player)
