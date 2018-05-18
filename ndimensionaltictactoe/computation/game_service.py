@@ -3,6 +3,7 @@ from copy import deepcopy
 
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
+from ndimensionaltictactoe.computation.game_renderer import render_tournament_outcome
 from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
@@ -86,6 +87,7 @@ class GameService:
     def close_tournaments(self):
         for tournament in self.tournaments.values():
             tournament.tournament_open = False
+            render_tournament_outcome(tournament)
 
         dumped_tournaments, errors = TournamentSchema().dump(self.tournaments.values(), many=True)
         return dumped_tournaments

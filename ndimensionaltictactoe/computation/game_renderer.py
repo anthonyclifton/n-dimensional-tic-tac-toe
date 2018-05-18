@@ -44,6 +44,7 @@ def render_round_outcome(tournament_name, round, round_number, lobby):
                                                                    game.name,
                                                                    game.player_o.name)
 
+    print ""
     for player_key in round.scoreboard:
         player_name = lobby[player_key].name
         score = str(round.scoreboard[player_key])
@@ -51,5 +52,20 @@ def render_round_outcome(tournament_name, round, round_number, lobby):
 
     print "{}".format("-" * 80)
 
-def render_tournament_outcome():
-    pass
+
+def render_tournament_outcome(tournament):
+    tournament_name = tournament.name[:30]
+    title_bar_length = 80 - (len(tournament_name) + 29)
+    print ""
+    print "----[ Tournament Complete: {} ]{}".format(tournament_name, "-" * title_bar_length)
+
+    for player_key in tournament.lobby:
+        player_name = tournament.lobby[player_key].name
+        total_points = sum([round.scoreboard[player_key] for round in tournament.rounds])
+
+        print "{} had {} wins, {} losses, and {} draws with {} total points".format(player_name,
+                                                                                    'X',
+                                                                                    'Y',
+                                                                                    'Z',
+                                                                                    total_points)
+    print "{}".format("-" * 80)
