@@ -4,7 +4,7 @@ from copy import deepcopy
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
 from ndimensionaltictactoe.computation.game_renderer import render_tournament_outcome
-from ndimensionaltictactoe.computation.game_thread import game_thread
+from ndimensionaltictactoe.computation.game_thread import game_thread, _shutdown_post
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.player import Player
@@ -71,8 +71,17 @@ class GameService:
         return dumped_player
 
     def get_lobby(self):
-        dumped_players, errors = LobbySchema().dump({'lobby': self.lobby.values()})
+        dumped_players, errors = LobbySchema().dump({"lobby": self.lobby.values()})
         return dumped_players
+
+    def clear_lobby(self):
+        for player in self.lobby.values():
+            _shutdown_post("{}/shutdown".format(player.update_url))
+
+        self.lobby = {}
+
+        dumped_lobby, errors = LobbySchema().dump({"lobby": self.lobby.values()})
+        return dumped_lobby
 
     def create_tournament(self, tournament_name):
         new_tournament = Tournament(uuid.uuid4(),

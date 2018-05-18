@@ -65,7 +65,7 @@ def handle_join_game():
     return response
 
 
-@app.route('/lobby', methods=['GET', 'POST'])
+@app.route('/lobby', methods=['GET', 'POST', 'DELETE'])
 def handle_lobby():
     if request.method == 'POST':
         lobby_json = request.get_json(silent=True)
@@ -77,6 +77,13 @@ def handle_lobby():
 
         response = Response(
             response=json.dumps(player),
+            status=200,
+            mimetype='application/json'
+        )
+    elif request.method == 'DELETE':
+        lobby = game_service.clear_lobby()
+        response = Response(
+            response=json.dumps(lobby),
             status=200,
             mimetype='application/json'
         )
