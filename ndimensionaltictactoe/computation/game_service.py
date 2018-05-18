@@ -1,6 +1,9 @@
 import uuid
 from copy import deepcopy
 
+from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
+
+from ndimensionaltictactoe.computation.game_renderer import render_game_outcome
 from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.exceptions.game_inprogress_exception import GameInprogressException
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
@@ -56,7 +59,10 @@ class GameService:
         game.state = GAME_INPROGRESS
 
         dumped_game, errors = GameSchema().dump(game)
+
+        scheduler.add_listener(self._process_completed_game, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
         self._start_game(scheduler, game)
+
         return dumped_game
 
     def enter_lobby(self, player_name, update_url):
@@ -112,3 +118,8 @@ class GameService:
             name='Running game',
             replace_existing=True,
             max_instances=100)
+
+    @staticmethod
+    def _process_completed_game(event):
+        game = event.retval
+        render_game_outcome(game)
