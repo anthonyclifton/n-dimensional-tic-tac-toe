@@ -83,18 +83,26 @@ class GameService:
         dumped_tournament, errors = TournamentSchema().dump(new_tournament)
         return dumped_tournament
 
+    def close_tournaments(self):
+        for tournament in self.tournaments.values():
+            tournament.tournament_open = False
+
+        dumped_tournaments, errors = TournamentSchema().dump(self.tournaments.values(), many=True)
+        return dumped_tournaments
+
     def get_tournaments(self):
         dumped_tournaments, errors = TournamentSchema().dump(self.tournaments.values(), many=True)
         return dumped_tournaments
 
-    def play_round(self,
-                   tournament_key,
-                   x_size,
-                   y_size,
-                   winning_length):
-        new_round = Round(x_size, y_size, winning_length)
+    def play_round(self, tournament_key, x_size, y_size, winning_length):
+        tournament = self.tournaments[tournament_key]
 
-        self.tournaments[tournament_key].play_round(new_round)
+        if tournament.tournament_open:
+            new_round = Round(x_size, y_size, winning_length)
+            tournament.play_round(new_round)
+            return True
+
+        return False
 
     def get_game_by_key(self, key):
         return self.games[key]

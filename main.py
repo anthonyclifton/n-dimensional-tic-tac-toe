@@ -91,7 +91,7 @@ def handle_lobby():
     return response
 
 
-@app.route('/tournament', methods=['GET', 'POST'])
+@app.route('/tournament', methods=['GET', 'POST', 'DELETE'])
 def handle_tournament():
     if request.method == 'POST':
         tournament_json = request.get_json(silent=True)
@@ -102,6 +102,13 @@ def handle_tournament():
 
         response = Response(
             response=json.dumps(tournament),
+            status=200,
+            mimetype='application/json'
+        )
+    elif request.method == 'DELETE':
+        tournaments = game_service.close_tournaments()
+        response = Response(
+            response=json.dumps(tournaments),
             status=200,
             mimetype='application/json'
         )
@@ -126,13 +133,13 @@ def handle_round():
     y_size = round_request['y_size']
     winning_length = round_request['winning_length']
 
-    game_service.play_round(tournament_key,
+    round_playable = game_service.play_round(tournament_key,
                             x_size,
                             y_size,
                             winning_length)
 
     response = Response(
-        response=json.dumps({'round': 'in_progress'}),
+        response=json.dumps({'round': 'in_progress' if round_playable else 'tournament closed'}),
         status=200,
         mimetype='application/json'
     )

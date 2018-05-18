@@ -55,9 +55,11 @@ class RoundSchema(Schema):
     y_size = fields.Integer()
     winning_length = fields.Integer()
     winners = fields.Nested(fields.UUID, many=True)
+    games = fields.Nested(GameSchema, many=True)
 
 
 class TournamentSchema(Schema):
     name = fields.String()
     key = fields.UUID()
     rounds = fields.Nested(RoundSchema, many=True)
+    tournament_open = fields.Boolean()

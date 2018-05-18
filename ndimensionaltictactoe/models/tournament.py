@@ -13,6 +13,7 @@ class Tournament(object):
         self.name = name
         self.lobby = lobby
 
+        self.tournament_open = True
         self.rounds = []
         self.current_round = None
 

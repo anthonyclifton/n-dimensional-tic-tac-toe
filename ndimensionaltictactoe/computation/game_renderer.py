@@ -50,3 +50,6 @@ def render_round_outcome(tournament_name, round, round_number, lobby):
         print "{}: {} points".format(player_name, score)
 
     print "{}".format("-" * 80)
+
+def render_tournament_outcome():
+    pass
