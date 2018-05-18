@@ -2,12 +2,9 @@ import itertools
 from copy import deepcopy
 from uuid import uuid4
 
-from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
-
 from ndimensionaltictactoe.computation.game_renderer import render_game_outcome, render_round_outcome
 from ndimensionaltictactoe.computation.game_thread import game_thread
-from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
-from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
+from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS, GAME_COMPLETED
 
 
 class Tournament(object):
@@ -17,16 +14,13 @@ class Tournament(object):
         self.lobby = lobby
 
         self.rounds = []
-        self.games_in_progress = []
         self.current_round = None
 
-    def play_round(self, scheduler, round):
+    def play_round(self, round):
         self.rounds.append(round)
         self.current_round = round
 
         pairings = itertools.combinations(self.lobby.values(), 2)
-
-        scheduler.add_listener(self._process_completed_game, EVENT_JOB_EXECUTED | EVENT_JOB_ERROR)
 
         for pairing in pairings:
             player_1 = pairing[0]
@@ -45,8 +39,9 @@ class Tournament(object):
             new_game.state = GAME_INPROGRESS
 
             round.games.append(new_game)
-            self.games_in_progress.append(new_game.key)
-            self._start_game(scheduler, new_game)
+            game_thread(new_game)
+
+        self.process_completed_game()
 
     def get_scoreboard(self):
         scoreboards = [round.scoreboard for round in self.rounds]
@@ -61,15 +56,14 @@ class Tournament(object):
                     tournament_scoreboard[score] = scoreboard[score]
         return tournament_scoreboard
 
-    def _process_completed_game(self, event):
-        game_key = event.retval.key
-        self.games_in_progress.remove(game_key)
+    def process_completed_game(self):
+        for game in self.current_round.games:
+            render_game_outcome(game)
+        self._score_games_in_round()
+        render_round_outcome(self.name, self.current_round, len(self.rounds), self.lobby)
 
-        if not self.games_in_progress:
-            for game in self.current_round.games:
-                render_game_outcome(game)
-            self._score_games_in_round()
-            render_round_outcome(self.name, self.current_round, len(self.rounds), self.lobby)
+    def _get_completed_games_in_current_round(self):
+        return [game.key for game in self.current_round.games if game.state == GAME_COMPLETED]
 
     def _score_games_in_round(self):
         # points are in increments of 2 so they can be split
@@ -96,11 +90,4 @@ class Tournament(object):
         else:
             scoreboard[player.key] = points
 
-    def _start_game(self, scheduler, game):
-        scheduler.add_job(
-            func=game_thread,
-            args=[game],
-            id='game',
-            name='Running game',
-            replace_existing=True,
-            max_instances=100)
+

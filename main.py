@@ -126,8 +126,7 @@ def handle_round():
     y_size = round_request['y_size']
     winning_length = round_request['winning_length']
 
-    game_service.play_round(scheduler,
-                            tournament_key,
+    game_service.play_round(tournament_key,
                             x_size,
                             y_size,
                             winning_length)
