@@ -4,7 +4,7 @@ from uuid import uuid4
 
 from apscheduler.events import EVENT_JOB_EXECUTED, EVENT_JOB_ERROR
 
-from ndimensionaltictactoe.computation.game_renderer import render_game_outcome
+from ndimensionaltictactoe.computation.game_renderer import render_game_outcome, render_round_outcome
 from ndimensionaltictactoe.computation.game_thread import game_thread
 from ndimensionaltictactoe.models.game import Game, GAME_INPROGRESS
 from ndimensionaltictactoe.models.mark import X_MARK, O_MARK
@@ -69,6 +69,7 @@ class Tournament(object):
             for game in self.current_round.games:
                 render_game_outcome(game)
             self._score_games_in_round()
+            render_round_outcome(self.name, self.current_round, len(self.rounds), self.lobby)
 
     def _score_games_in_round(self):
         # points are in increments of 2 so they can be split

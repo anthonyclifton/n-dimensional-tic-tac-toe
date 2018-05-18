@@ -18,3 +18,14 @@ def render_game_outcome(game):
     else:
         print("Game was Drawn")
     print "{}".format("-" * 80)
+
+
+def render_round_outcome(tournament_name, round, round_number, lobby):
+    round_name = "Round #{}".format(round_number)
+    title_bar_length = 80 - (len(round_name) + len(tournament_name) + 33)
+    print ""
+    print "----[ {} Complete in Tournament: {} ]{}".format(round_name,
+                                                           tournament_name,
+                                                           "-" * title_bar_length)
+
+    print "{}".format("-" * 80)
