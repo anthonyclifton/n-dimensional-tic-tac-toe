@@ -59,6 +59,8 @@ def render_tournament_outcome(tournament):
     print ""
     print "----[ Tournament Complete: {} ]{}".format(tournament_name, "-" * title_bar_length)
 
+    print "Rounds Played: {}".format(len(tournament.rounds))
+
     for player_key in tournament.lobby:
         player_name = tournament.lobby[player_key].name
         total_points = sum([round.scoreboard[player_key] for round in tournament.rounds])
