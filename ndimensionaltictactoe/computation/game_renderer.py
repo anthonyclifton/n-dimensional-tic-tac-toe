@@ -65,9 +65,30 @@ def render_tournament_outcome(tournament):
         player_name = tournament.lobby[player_key].name
         total_points = sum([round.scoreboard[player_key] for round in tournament.rounds])
 
+        wins = 0
+        losses = 0
+        draws = 0
+
+        for round in tournament.rounds:
+            for game in round.games:
+                if player_key == game.player_x.key:
+                    if game.player_x.winner:
+                        wins = wins + 1
+                    elif game.player_o.winner:
+                        losses = losses + 1
+                    else:
+                        draws = draws + 1
+                elif player_key == game.player_o.key:
+                    if game.player_o.winner:
+                        wins = wins + 1
+                    elif game.player_x.winner:
+                        losses = losses + 1
+                    else:
+                        draws = draws + 1
+
         print "{} had {} wins, {} losses, and {} draws with {} total points".format(player_name,
-                                                                                    'X',
-                                                                                    'Y',
-                                                                                    'Z',
+                                                                                    wins,
+                                                                                    losses,
+                                                                                    draws,
                                                                                     total_points)
     print "{}".format("-" * 80)
