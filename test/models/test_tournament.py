@@ -58,6 +58,11 @@ class TestTournament(unittest.TestCase):
         tournament.rounds.append(round)
         tournament.current_round = round
         tournament.games_in_progress = [self.game_1.key]
+        tournament.lobby = {
+            self.player_1.key: self.player_1,
+            self.player_2.key: self.player_2,
+            self.player_3.key: self.player_3
+        }
 
         self.game_1.player_x.winner = True
         self.game_1.player_o.winner = False
@@ -83,9 +88,11 @@ class TestTournament(unittest.TestCase):
         tournament = Tournament(uuid4(), "Test Tournament", [])
         tournament.rounds.append(round)
         tournament.current_round = round
-        tournament.games_in_progress = [self.game_1.key]
-
-        event = JobExecutionEvent(1234, 4567, 'jobstore', 'whenever', retval=self.game_1)
+        tournament.lobby = {
+            self.player_1.key: self.player_1,
+            self.player_2.key: self.player_2,
+            self.player_3.key: self.player_3
+        }
 
         tournament.process_completed_game()
 

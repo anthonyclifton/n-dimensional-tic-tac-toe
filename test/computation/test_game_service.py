@@ -141,10 +141,7 @@ class TestGameService(unittest.TestCase):
         y_size = 4
         winning_length = 3
 
-        mock_scheduler = MagicMock(autospec=True)
-
-        self.game_service.play_round(mock_scheduler,
-                                     UUID(tournament['key']),
+        self.game_service.play_round(UUID(tournament['key']),
                                      x_size,
                                      y_size,
                                      winning_length)

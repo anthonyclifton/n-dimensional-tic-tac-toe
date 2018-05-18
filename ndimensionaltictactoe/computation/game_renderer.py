@@ -33,14 +33,20 @@ def render_round_outcome(tournament_name, round, round_number, lobby):
     print "Winners Receive: {} points (points split on draw)\n".format(round.winner_points)
 
     for game in round.games:
-        print "{} Player {} {} Game {} with {} Player {}".format("bob",
-                                                                 "X",
-                                                                 "won",
-                                                                 "game1",
-                                                                 "joe",
-                                                                 "O")
+        game_result = "drew"
+        if game.player_x.winner:
+            game_result = "won"
+        elif game.player_o.winner:
+            game_result = "lost"
 
-    for score in round.scoreboard:
-        print "{}:{}{} points".format("bob", " " * 5, "16")
+        print "{} (Player X) {} Game {} with {} (Player O)".format(game.player_x.name,
+                                                                   game_result,
+                                                                   game.name,
+                                                                   game.player_o.name)
+
+    for player_key in round.scoreboard:
+        player_name = lobby[player_key].name
+        score = str(round.scoreboard[player_key])
+        print "{}: {} points".format(player_name, score)
 
     print "{}".format("-" * 80)
