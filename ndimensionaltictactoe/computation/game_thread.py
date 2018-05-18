@@ -20,34 +20,45 @@ def _shutdown_post(url):
 
 def game_thread(game, pvp_mode=False):
     move_counter = game.size_x * game.size_y
-    while game.state == GAME_INPROGRESS and move_counter > 0:
-        if game.player_x_turn:
-            move = _generic_post("{}/update".format(game.player_x.update_url), game)
-            winner = game.mark_cell_by_coordinates(move['x'], move['y'], X_MARK)
-            if winner:
-                game.player_x.winner = True
-                game.player_o.winner = False
-            move_counter = move_counter - 1
-            game.player_x_turn = False
-        else:
-            move = _generic_post("{}/update".format(game.player_o.update_url), game)
-            winner = game.mark_cell_by_coordinates(move['x'], move['y'], O_MARK)
-            if winner:
-                game.player_x.winner = False
-                game.player_o.winner = True
-            move_counter = move_counter - 1
-            game.player_x_turn = True
+    try:
+        while game.state == GAME_INPROGRESS and move_counter > 0:
+            if game.player_x_turn:
+                move = _generic_post("{}/update".format(game.player_x.update_url), game)
+                winner = game.mark_cell_by_coordinates(move['x'], move['y'], X_MARK)
+                if winner:
+                    game.player_x.winner = True
+                    game.player_o.winner = False
+                move_counter = move_counter - 1
+                game.player_x_turn = False
+            else:
+                move = _generic_post("{}/update".format(game.player_o.update_url), game)
+                winner = game.mark_cell_by_coordinates(move['x'], move['y'], O_MARK)
+                if winner:
+                    game.player_x.winner = False
+                    game.player_o.winner = True
+                move_counter = move_counter - 1
+                game.player_x_turn = True
+    except:
+        _process_completed_game(game)
 
     if game.state == GAME_INPROGRESS:
-        game.player_x.winner = False
-        game.player_o.winner = False
-        game.state = GAME_COMPLETED
+        _process_completed_game(game)
 
-    _game_completed(game, pvp_mode)
+    try:
+        _send_completed_game_to_clients(game, pvp_mode)
+    except:
+        pass
+
     return game
 
 
-def _game_completed(game, pvp_mode):
+def _process_completed_game(game):
+    game.state = GAME_COMPLETED
+    game.player_x.winner = False
+    game.player_o.winner = False
+
+
+def _send_completed_game_to_clients(game, pvp_mode):
     _generic_post("{}/update".format(game.player_x.update_url), game)
     _generic_post("{}/update".format(game.player_o.update_url), game)
 

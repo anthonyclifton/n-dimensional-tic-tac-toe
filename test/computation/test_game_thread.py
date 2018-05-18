@@ -1,6 +1,7 @@
 import unittest
 from uuid import uuid4
 
+import pytest
 from mock import patch
 
 from ndimensionaltictactoe.computation.game_thread import game_thread
@@ -63,6 +64,17 @@ class TestGameThread(unittest.TestCase):
         self.assertEqual(False, self.game.player_x.winner)
         self.assertEqual(True, self.game.player_o.winner)
 
+    @patch('ndimensionaltictactoe.computation.game_thread._generic_post', autospec=True)
+    def test__game_thread__will_terminate_with_a_draw_when_exception_raised(self,
+                                                                            mock_post):
+        mock_post.side_effect = ValueError("ugh")
+
+        game_thread(self.game)
+
+        self.assertEqual(GAME_COMPLETED, self.game.state)
+        self.assertEqual(False, self.game.player_x.winner)
+        self.assertEqual(False, self.game.player_o.winner)
+
 
 def _post_fake_no_winner(url, game):
     moves = [
@@ -115,3 +127,4 @@ def _post_fake_o_wins(url, game):
 
     next_move = moves[len(game.cells)]
     return {'x': next_move.x, 'y': next_move.y}
+
