@@ -28,4 +28,19 @@ def render_round_outcome(tournament_name, round, round_number, lobby):
                                                            tournament_name,
                                                            "-" * title_bar_length)
 
+    print "Board Size: {} cells by {} cells".format(round.x_size, round.y_size)
+    print "Winning Line Length: {} cells".format(round.winning_length)
+    print "Winners Receive: {} points (points split on draw)\n".format(round.winner_points)
+
+    for game in round.games:
+        print "{} Player {} {} Game {} with {} Player {}".format("bob",
+                                                                 "X",
+                                                                 "won",
+                                                                 "game1",
+                                                                 "joe",
+                                                                 "O")
+
+    for score in round.scoreboard:
+        print "{}:{}{} points".format("bob", " " * 5, "16")
+
     print "{}".format("-" * 80)
