@@ -36,7 +36,8 @@ class Tournament(object):
                             deepcopy(player_1),
                             deepcopy(player_2),
                             size_x=round.x_size,
-                            size_y=round.y_size)
+                            size_y=round.y_size,
+                            winning_length=round.winning_length)
             new_game.state = GAME_INPROGRESS
 
             round.games.append(new_game)
