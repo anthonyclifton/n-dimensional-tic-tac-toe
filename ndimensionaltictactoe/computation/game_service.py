@@ -82,7 +82,10 @@ class GameService:
 
     def clear_lobby(self):
         for player in self.lobby.values():
-            _shutdown_post("{}/shutdown".format(player.update_url))
+            try:
+                _shutdown_post("{}/shutdown".format(player.update_url))
+            except:
+                pass
 
         self.lobby = {}
 
